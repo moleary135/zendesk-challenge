@@ -1,5 +1,7 @@
 package com.mozendesk.objects;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.mozendesk.objects.searchable.SearchableFields;
 
 public class Organization extends SearchableObject{
@@ -20,4 +22,10 @@ public class Organization extends SearchableObject{
         sb.append("\n");
         return sb.toString();
     }
+
+    //@TODO formatting better, pretty print w/ field names too
+    public String toSummaryString() {
+        return getField("name") + " " + getField("_id") + "\n";
+    }
+
 }

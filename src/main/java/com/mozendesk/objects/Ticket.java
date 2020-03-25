@@ -8,8 +8,8 @@ public class Ticket extends SearchableObject {
     public Ticket(){}
 
     @JsonSetter("due_at")
-    public void setDueAt(String fieldName, Object jsonDate) {
-        setDateTimeField(fieldName, jsonDate);
+    public void setDueAt(Object jsonDate) {
+        setDateTimeField("due_at", jsonDate);
     }
 
     public String prettyString() {
@@ -27,5 +27,9 @@ public class Ticket extends SearchableObject {
     @Override
     public String toString() {
         return getField("subject") + " " + getField("created_at");
+    }
+
+    public String toSummaryString() {
+        return getField("_id") + " " + getField("subject") + " " + getField("created_at") + " " + getField("last_login_at") + "\n";
     }
 }

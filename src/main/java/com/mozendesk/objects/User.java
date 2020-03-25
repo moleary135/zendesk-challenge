@@ -8,8 +8,8 @@ public class User extends SearchableObject {
     public User(){}
 
     @JsonSetter("last_login_at")
-    public void setLastLoginAt(String fieldName, Object jsonDate) {
-        setDateTimeField(fieldName, jsonDate);
+    public void setLastLoginAt(Object jsonDate) {
+        setDateTimeField("last_login_at", jsonDate);
     }
 
     public String prettyString() {
@@ -27,6 +27,10 @@ public class User extends SearchableObject {
     @Override
     public String toString() {
         return getField("subject") + " " + getField("created_at") + " " + getField("last_login_at");
+    }
+
+    public String toSummaryString() {
+        return getField("subject") + " " + getField("created_at") + " " + getField("last_login_at") + "\n";
     }
 }
 

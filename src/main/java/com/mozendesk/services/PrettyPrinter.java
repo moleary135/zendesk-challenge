@@ -13,6 +13,6 @@ public class PrettyPrinter {
     public static final String INVALID_OBJECT_TYPE_TEXT = "Please specify a valid object type.";
     public static final String INVALID_FIELD_TYPE_TEXT = "Please specify a valid field for this type.";
     public static final String INVALID_VALUE_FOR_TYPE_TEXT = "Please specify a valid value for the given field.";
-    public static final String SEARCH_RESULTS_TEXT = "%nFound %d result(s) for search: %s%n";
+    public static final String SEARCH_RESULTS_TEXT = "%nFound %d result(s) for search: %s%n%n";
     public static final String JSON_DIR_NOT_FOUND_TEXT = "'organizations.json', 'tickets.json', and/or 'users.json' were not found in given directory '%s'%n";
 }

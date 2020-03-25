@@ -60,7 +60,9 @@ public class Searcher {
         return true;
     }
 
-    public List<? extends SearchableObject> search(Collection<? extends SearchableObject> objs, FieldType ft, String inField, String inValue) {
+    //@TODO make new Result classes and super Result class and change return type to List<? extends superResult>
+    // add switch based on object to call this one?, can send predicate maybe?
+    public <E> List<? extends SearchableObject> search(Collection<? extends SearchableObject> objs, FieldType ft, String inField, String inValue) {
         switch(ft) {
             case STRING:
                 return objs.stream().filter(o -> ((String)o.getField(inField)).equalsIgnoreCase(inValue)).collect(Collectors.toList());
@@ -79,8 +81,13 @@ public class Searcher {
                     e.printStackTrace();
                 }
             case SARRAY: //@TODO make custom searchablearraylist type that extend searchableobject?
-                return objs.stream().filter(o -> ((ArrayList<String>)o.getField(inField)).stream().anyMatch(e -> e.equalsIgnoreCase(inValue))).collect(Collectors.toList());
+                return objs.stream().filter(
+                        o -> {
+                            List<?> list = (List<?>)o.getField(inField);
+                            return list.stream().anyMatch(e -> ((String)e).equalsIgnoreCase(inValue));
+                        }).collect(Collectors.toList());
         }
+
         return null; //@TODO throw
     }
 }

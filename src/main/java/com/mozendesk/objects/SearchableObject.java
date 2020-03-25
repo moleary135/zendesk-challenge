@@ -28,8 +28,8 @@ public abstract class SearchableObject {
 
     //Need to specify how to create datetime fields or else the object mapper creates them as Strings.
     @JsonSetter("created_at")
-    public void setCreatedAt(String fieldName, Object jsonDate) {
-        setDateTimeField(fieldName, jsonDate);
+    public void setCreatedAt(Object jsonDate) {
+        setDateTimeField("created_at", jsonDate);
     }
 
     public Object getField(String fieldName){
