@@ -1,5 +1,7 @@
 package com.mozendesk.objects.searchable;
 
+import com.mozendesk.services.PrettyPrinter;
+
 import java.util.AbstractMap;
 import java.util.Map;
 
@@ -15,7 +17,7 @@ public class SearchableFields {
             new AbstractMap.SimpleEntry<>("external_id", new SearchField("External Id", FieldType.STRING)),
             new AbstractMap.SimpleEntry<>("name", new SearchField("Name", FieldType.STRING)),
             new AbstractMap.SimpleEntry<>("alias", new SearchField("Alias", FieldType.STRING)),
-            new AbstractMap.SimpleEntry<>("created_at", new SearchField("Created A", FieldType.TIMESTAMP)),
+            new AbstractMap.SimpleEntry<>("created_at", new SearchField("Created At", FieldType.TIMESTAMP)),
             new AbstractMap.SimpleEntry<>("active", new SearchField("Active", FieldType.BOOLEAN)),
             new AbstractMap.SimpleEntry<>("verified", new SearchField("Verified", FieldType.BOOLEAN)),
             new AbstractMap.SimpleEntry<>("shared", new SearchField("Shared", FieldType.BOOLEAN)),
@@ -63,7 +65,6 @@ public class SearchableFields {
     );
 
     /**
-     * @TODO validate invalue for field too somewhere
      * Fetches the type of the field on the given object
      * @return the FieldType of the field on the given object or
      * @throws if nonsensical values
@@ -85,6 +86,26 @@ public class SearchableFields {
                     return ticketFieldTypes.get(field).getType();
                 }
         }
-        return null; //@TODO throw error
+        return null;
+    }
+
+    public static String getPrettyPrintFields(String objectType){
+        StringBuilder sb = new StringBuilder(100);
+        switch(objectType) {
+            case "organization":
+                orgFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                break;
+            case "user":
+                userFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                break;
+            case "ticket":
+                ticketFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                break;
+            default:
+                return PrettyPrinter.INVALID_OBJECT_TYPE_TEXT;
+        }
+
+
+        return sb.toString();
     }
 }

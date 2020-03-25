@@ -20,16 +20,7 @@ public class Organization extends SearchableObject{
                     .append(getField(key))
                     .append("\n");
         }
+        sb.append("\n");
         return sb.toString();
     }
 }
-
-//            new AbstractMap.SimpleEntry<>("_id", FieldType.INTEGER),
-//            new AbstractMap.SimpleEntry<>("url", FieldType.STRING),
-//            new AbstractMap.SimpleEntry<>("external_id", FieldType.STRING),
-//            new AbstractMap.SimpleEntry<>("name", FieldType.STRING),
-//            new AbstractMap.SimpleEntry<>("domain_names", FieldType.SARRAY),
-//            new AbstractMap.SimpleEntry<>("created_at", FieldType.TIMESTAMP),
-//            new AbstractMap.SimpleEntry<>("details", FieldType.STRING),
-//            new AbstractMap.SimpleEntry<>("shared_tickets", FieldType.BOOLEAN),
-//            new AbstractMap.SimpleEntry<>("tags", FieldType.SARRAY)

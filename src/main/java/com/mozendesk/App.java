@@ -1,8 +1,11 @@
 package com.mozendesk;
 
 import com.mozendesk.objects.Organization;
+import com.mozendesk.objects.SearchableObject;
 import com.mozendesk.objects.Ticket;
 import com.mozendesk.objects.User;
+import com.mozendesk.objects.searchable.FieldType;
+import com.mozendesk.objects.searchable.SearchableFields;
 import com.mozendesk.services.JSONLoader;
 import com.mozendesk.services.Searcher;
 
@@ -10,6 +13,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static com.mozendesk.services.PrettyPrinter.*;
 
 /**
  * @TODO documentation including readme
@@ -21,6 +28,7 @@ import java.util.Scanner;
  * Runs the main program
  */
 public class App {
+    public static final Set<String> searchableObjectTypes = Set.of("organization", "ticket", "user");
 
     public static void main(String[] args) {
         //@TODO index on relationships between objects, or convert list to map of objects/ create map
@@ -32,8 +40,7 @@ public class App {
         List<Organization> organizations = new ArrayList<>();
         List<Ticket> tickets = new ArrayList<>();
         List<User> users = new ArrayList<>();
-
-        String jsonFolder = "resources/"; //organizations.json
+        String jsonFolder = "resources/";
 
         try {
             organizations = loader.loadOrgs(jsonFolder);
@@ -43,31 +50,54 @@ public class App {
             e.printStackTrace();
         }
 
-
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to Zendesk Search\n");
-        System.out.println("Instructions: \n Type 'exit' at anytime to quit the program.");
-        System.out.println("Search objects using the format:");
-        System.out.println("\t object searchField searchValue");
-        System.out.println("Possible values for object are 'organization', 'user', and 'ticket'.");
-        System.out.println("To see possible search fields for a specific object type use:");
-        System.out.println("\t object -searchFields");
+        System.out.println(STARTUP_TEXT);
 
-        String input = scanner.nextLine();
+        String input;
+        String[] inputArr;
+        List<? extends SearchableObject> resultList;
 
-        String inObject= "organization";
-        String inField= "name";
-        String inValue = "Nutralab";
-        while(!input.equals("exit")) {
-            if (input.contains("searchFields")) {
-                //list possible search fields
-            } else {
-                searcher.search(users, inObject, inField, inValue);
-            }
+        do {
             input = scanner.nextLine();
-        }
+            inputArr = input.split(" ", 3);
 
-        System.out.println("Goodbye!");
+            if (input.equals("help") || inputArr.length < 2 || (inputArr.length < 3 && !inputArr[1].equals("-searchFields"))) {
+                System.out.println(HELP_TEXT);
+            } else if (!searchableObjectTypes.contains(inputArr[0])) { //validate object type
+                System.out.println(INVALID_OBJECT_TYPE_TEXT);
+            } else if (inputArr[1].equals("-searchFields")) {
+                System.out.println(SearchableFields.getPrettyPrintFields(inputArr[0]));
+            } else {
+                //validate field on object and value on field
+                FieldType ft = SearchableFields.getType(inputArr[0], inputArr[1]);
+                if (ft == null) {
+                    System.out.println(INVALID_FIELD_TYPE_TEXT);
+                    continue;
+                } else if (!searcher.validateInValue(ft, inputArr[2])) {
+                    System.out.println(INVALID_VALUE_FOR_TYPE_TEXT);
+                    continue;
+                }
+
+                //search
+                switch (inputArr[0]) {
+                    case "organization":
+                        resultList = searcher.search(organizations, ft, inputArr[1], inputArr[2]);
+                        System.out.printf(SEARCH_RESULTS_TEXT, resultList.size(), input);
+                                resultList.forEach(o -> System.out.println(o.prettyString()));
+                        break;
+                    case "user":
+                        (searcher.search(users, ft, inputArr[1], inputArr[2]))
+                                .forEach(o -> System.out.println(o.prettyString()));
+                        break;
+                    case "ticket":
+                        (searcher.search(tickets, ft, inputArr[1], inputArr[2]))
+                                .forEach(o -> System.out.println(o.prettyString()));
+                        break;
+                }
+            }
+        }    while(!input.equals("exit"));
+
+        System.out.println(GOODBYE_TEXT);
         scanner.close();
         System.exit(0);
     }
