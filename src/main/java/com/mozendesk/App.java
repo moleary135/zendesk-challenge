@@ -1,26 +1,19 @@
 package com.mozendesk;
 
-import com.mozendesk.objects.Organization;
-import com.mozendesk.objects.SearchableObject;
-import com.mozendesk.objects.Ticket;
-import com.mozendesk.objects.User;
+import com.mozendesk.objects.*;
 import com.mozendesk.objects.searchable.FieldType;
 import com.mozendesk.objects.searchable.SearchableFields;
-import com.mozendesk.services.JSONLoader;
 import com.mozendesk.services.Searcher;
 
-import java.io.IOException;
 import java.util.*;
 
 import static com.mozendesk.services.PrettyPrinter.*;
 
 /**
  * @TODO documentation including readme
- * @TODO make sure absolute paths work as well,
  * @TODO make sure "" searches work and don't break in a comparison against null!
- * @TODO keep map, make sure index on relations
- * TODO make sure parallel streams are thread safe, don't make final because that's not realistic for future extensibility
- *
+ * @TODO summary strings on objects
+ * @TODO optimize performance?
  * Runs the main program
  */
 public class App {
@@ -28,29 +21,16 @@ public class App {
 
     //java -jar application.jar [jsonPath]
     public static void main(String[] args) {
-        JSONLoader loader = new JSONLoader();
-        Map<Integer, Organization> organizations = new HashMap<>();
-        Map<String, Ticket> tickets = new HashMap<>();
-        Map<Integer, User> users = new HashMap<>();
-        String jsonFolder = args.length > 0 ? args[0] : "resources/";
+        String jsonFolder = args.length <= 0 ? "resources/" : args[0]; //default contains given json files
 
-        try {
-            organizations = loader.loadOrgs(jsonFolder);
-            tickets = loader.loadTickets(jsonFolder);
-            users = loader.loadUsers(jsonFolder);
-        } catch (IOException e) {
-            System.out.printf(JSON_DIR_NOT_FOUND_TEXT, jsonFolder);
-            System.exit(-1);
-        }
-
-        Searcher searcher = new Searcher(tickets, users);
+        Searcher searcher = new Searcher(jsonFolder);
 
         Scanner scanner = new Scanner(System.in);
         System.out.println(STARTUP_TEXT);
 
         String input;
         String[] inputArr;
-        List<? extends SearchableObject> resultList;
+        List<? extends SearchResult> resultList;
 
         do {
             input = scanner.nextLine();
@@ -73,22 +53,10 @@ public class App {
                     continue;
                 }
 
-                //search
-                switch (inputArr[0]) {
-                    case "organization":
-                        resultList = searcher.search(organizations.values(), ft, inputArr[1], inputArr[2]);
-                        System.out.printf(SEARCH_RESULTS_TEXT, resultList.size(), input);
-                                resultList.forEach(o -> System.out.println(o.prettyString()));
-                        break;
-                    case "user":
-                        (searcher.search(users.values(), ft, inputArr[1], inputArr[2]))
-                                .forEach(o -> System.out.println(o.prettyString()));
-                        break;
-                    case "ticket":
-                        (searcher.search(tickets.values(), ft, inputArr[1], inputArr[2]))
-                                .forEach(o -> System.out.println(o.prettyString()));
-                        break;
-                }
+                //search and print results
+                resultList = searcher.search(inputArr[0], ft, inputArr[1], inputArr[2]);
+                System.out.printf(SEARCH_RESULTS_TEXT, resultList.size(), input);
+                resultList.forEach(o -> System.out.println(o.prettyString()));
             }
         }    while(!input.equals("exit"));
 
