@@ -17,25 +17,21 @@ public class TicketResult extends SearchResult {
 
     public String prettyString() {
         StringBuilder sb = new StringBuilder(ticket.prettyString());
-
         if (organization == null) {
-            sb.append("No Associated Organization");
+            sb.append("No Associated Organization\n\n");
         } else {
-            sb.append("Organization: ").append(organization.toSummaryString());
+            sb.append("Organization:\n").append(organization.toSummaryString());
         }
-
         if (assignedTo == null) {
-            sb.append("No Assigned User");
+            sb.append("No Assigned User\n\n");
         } else {
-            sb.append("Assigned To: ").append(assignedTo.toSummaryString());
+            sb.append("Assigned To:\n").append(assignedTo.toSummaryString());
         }
-
         if (submittedBy == null) {
-            sb.append("No Submitted User");
+            sb.append("No Submitted User\n\n");
         } else {
-            sb.append("Submitted By: ").append(submittedBy.toSummaryString());
+            sb.append("Submitted By:\n").append(submittedBy.toSummaryString());
         }
-
         sb.append("\n");
         return sb.toString();
     }

@@ -5,7 +5,7 @@ import com.mozendesk.objects.searchable.SearchableFields;
 
 public class Ticket extends SearchableObject {
 
-    public Ticket(){}
+    public Ticket() {}
 
     @JsonSetter("due_at")
     public void setDueAt(Object jsonDate) {
@@ -15,21 +15,19 @@ public class Ticket extends SearchableObject {
     public String prettyString() {
         StringBuilder sb = new StringBuilder(200);
         for (String key : SearchableFields.ticketFieldTypes.keySet()) {
-            sb.append(SearchableFields.ticketFieldTypes.get(key).getPrettyName())
-                    .append("\t\t")
-                    .append(getField(key))
-                    .append("\n");
+            sb.append(String.format("%-20s %-20s%n", SearchableFields.ticketFieldTypes.get(key).getPrettyName(), getField(key)));
         }
         sb.append("\n");
         return sb.toString();
     }
 
-    @Override
-    public String toString() {
-        return getField("subject") + " " + getField("created_at");
-    }
-
     public String toSummaryString() {
-        return getField("_id") + " " + getField("subject") + " " + getField("created_at") + " " + getField("last_login_at") + "\n";
+        StringBuilder sb = new StringBuilder(200);
+        String[] fieldsToPrint = new String[] {"_id", "subject", "status"};
+        for (String key : fieldsToPrint) {
+            sb.append(String.format("%-20s %-20s%n", SearchableFields.ticketFieldTypes.get(key).getPrettyName(), getField(key)));
+        }
+        sb.append("\n");
+        return sb.toString();
     }
 }

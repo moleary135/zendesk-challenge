@@ -4,8 +4,9 @@ package com.mozendesk.services;
 public class PrettyPrinter {
     public static final String HELP_TEXT = "Instructions: \nType 'exit' at anytime to quit the program.\n" +
             "Search for objects using the format:\n" +
-            "\t object searchField searchValue\n" +
+            "\t object searchField [searchValue]\n" +
             "Possible values for object are 'organization', 'user', and 'ticket'.\n" +
+            "Leaving searchValue blank with find matches whose given searchField is empty." +
             "To see possible search fields for a specific object type use:\n" +
             "\t object -searchFields\n";
     public static final String STARTUP_TEXT = "\nWelcome to Zendesk Search\n\n" + HELP_TEXT;

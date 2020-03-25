@@ -5,7 +5,7 @@ public class SearchField {
     private String prettyName;
     protected FieldType type;
 
-    public SearchField(String prettyName, FieldType type){
+    public SearchField(String prettyName, FieldType type) {
         this.prettyName = prettyName;
         this.type = type;
     }
@@ -14,7 +14,7 @@ public class SearchField {
         return prettyName;
     }
 
-    public FieldType getType(){
+    public FieldType getType() {
         return type;
     }
 }

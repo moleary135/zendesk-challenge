@@ -17,27 +17,23 @@ public class UserResult extends SearchResult {
 
     public String prettyString() {
         StringBuilder sb = new StringBuilder(user.prettyString());
-
         if (organization == null) {
-            sb.append("No Associated Organization");
+            sb.append("No Associated Organization\n\n");
         } else {
-            sb.append("Organization: ").append(organization.toSummaryString());
+            sb.append("Organization:\n").append(organization.toSummaryString());
         }
-
         if (assignedTickets == null) {
-            sb.append("No Assigned Tickets");
+            sb.append("No Assigned Tickets\n\n");
         } else {
             sb.append("Assigned Tickets:\n");
             assignedTickets.forEach(t -> sb.append(t.toSummaryString()));
         }
-
         if (submittedTickets == null) {
-            sb.append("No Submitted Tickets");
+            sb.append("No Submitted Tickets\n\n");
         } else {
             sb.append("Submitted Tickets:\n");
             submittedTickets.forEach(t -> sb.append(t.toSummaryString()));
         }
-
         sb.append("\n");
         return sb.toString();
     }

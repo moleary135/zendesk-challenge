@@ -18,11 +18,9 @@ public abstract class SearchableObject {
         this.fields = new HashMap<>();
     }
 
-    public abstract String prettyString();
-
     //Tell json mapper to use this setter for any fields the do not have a matching field on the object
     @JsonAnySetter
-    public void setField(String fieldName, Object value){
+    public void setField(String fieldName, Object value) {
         this.fields.put(fieldName, value);
     }
 
@@ -32,7 +30,7 @@ public abstract class SearchableObject {
         setDateTimeField("created_at", jsonDate);
     }
 
-    public Object getField(String fieldName){
+    public Object getField(String fieldName) {
         return this.hasField(fieldName) ? this.fields.get(fieldName) : "";
     }
 
@@ -51,7 +49,7 @@ public abstract class SearchableObject {
         return this.fields.containsKey(field);
     }
 
-    public HashMap<String, Object> getFields(){
+    public HashMap<String, Object> getFields() {
         return this.fields;
     }
 
@@ -60,7 +58,7 @@ public abstract class SearchableObject {
         DateFormat df = new SimpleDateFormat(JSONLoader.dateFormatString);
         try {
             setField(fieldName, df.parse((String) jsonDate));
-        } catch (ParseException e){
+        } catch (ParseException e) {
             //invalid date format in json file
             e.printStackTrace();
         }

@@ -13,23 +13,20 @@ public class OrganizationResult extends SearchResult{
         this.tickets = tickets;
     }
 
-    //@TODO to pretty print lists w/ indent?
     public String prettyString() {
         StringBuilder sb = new StringBuilder(organization.prettyString());
         if (users == null) {
-            sb.append("No Associated Users");
+            sb.append("No Associated Users\n\n");
         } else {
             sb.append("Users:\n");
             users.forEach(u -> sb.append(u.toSummaryString()));
         }
-
         if (tickets == null) {
-            sb.append("No Associated Tickets");
+            sb.append("No Associated Tickets\n\n");
         } else {
             sb.append("Tickets:\n");
             tickets.forEach(t -> sb.append(t.toSummaryString()));
         }
-
         sb.append("\n");
         return sb.toString();
     }

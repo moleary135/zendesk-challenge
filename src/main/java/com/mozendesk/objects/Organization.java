@@ -1,19 +1,11 @@
 package com.mozendesk.objects;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.mozendesk.objects.searchable.SearchableFields;
 
 public class Organization extends SearchableObject{
 
-    public Organization(){}
+    public Organization() {}
 
-    @Override
-    public String toString() {
-        return getField("name") + " " + getField("_id");
-    }
-
-    //@TODO also need to add relationships so provs need separate class to represent search results?
     public String prettyString() {
         StringBuilder sb = new StringBuilder(200);
         for (String key : SearchableFields.orgFieldTypes.keySet()) {
@@ -23,9 +15,14 @@ public class Organization extends SearchableObject{
         return sb.toString();
     }
 
-    //@TODO formatting better, pretty print w/ field names too
+    //Only show most important fields when looking at in terms of relationship to ticket or user
     public String toSummaryString() {
-        return getField("name") + " " + getField("_id") + "\n";
+        StringBuilder sb = new StringBuilder(200);
+        String[] fieldsToPrint = new String[] {"_id", "name"};
+        for (String key : fieldsToPrint) {
+            sb.append(String.format("%-20s %-20s%n", SearchableFields.orgFieldTypes.get(key).getPrettyName(), getField(key)));
+        }
+        sb.append("\n");
+        return sb.toString();
     }
-
 }

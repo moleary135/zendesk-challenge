@@ -11,8 +11,10 @@ import static com.mozendesk.services.PrettyPrinter.*;
 
 /**
  * @TODO documentation including readme
- * @TODO make sure "" searches work and don't break in a comparison against null!
- * @TODO summary strings on objects
+ * @TODO unit tests!!!! - empty searches "", good searches, bad search params of each part
+ * @TODO generalize leftovers
+ * @TODO clean up code style - lint
+ * @TODO summary strings on objects, add separater between objects in list ------? maybe or better spacing
  * @TODO optimize performance?
  * Runs the main program
  */
@@ -31,30 +33,32 @@ public class App {
         String input;
         String[] inputArr;
         List<? extends SearchResult> resultList;
+        String inValue;
 
         do {
             input = scanner.nextLine();
             inputArr = input.split(" ", 3);
 
-            if (input.equals("help") || inputArr.length < 2 || (inputArr.length < 3 && !inputArr[1].equals("-searchFields"))) {
+            if (input.equals("help") || inputArr.length < 2) {
                 System.out.println(HELP_TEXT);
             } else if (!searchableObjectTypes.contains(inputArr[0])) { //validate object type
                 System.out.println(INVALID_OBJECT_TYPE_TEXT);
             } else if (inputArr[1].equals("-searchFields")) {
                 System.out.println(SearchableFields.getPrettyPrintFields(inputArr[0]));
             } else {
+                inValue = inputArr.length != 3 ? "" : inputArr[2];
                 //validate field on object and value on field
                 FieldType ft = SearchableFields.getType(inputArr[0], inputArr[1]);
                 if (ft == null) {
                     System.out.println(INVALID_FIELD_TYPE_TEXT);
                     continue;
-                } else if (!searcher.validateInValue(ft, inputArr[2])) {
+                } else if (!searcher.validateInValue(ft, inValue)) {
                     System.out.println(INVALID_VALUE_FOR_TYPE_TEXT);
                     continue;
                 }
 
                 //search and print results
-                resultList = searcher.search(inputArr[0], ft, inputArr[1], inputArr[2]);
+                resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
                 System.out.printf(SEARCH_RESULTS_TEXT, resultList.size(), input);
                 resultList.forEach(o -> System.out.println(o.prettyString()));
             }

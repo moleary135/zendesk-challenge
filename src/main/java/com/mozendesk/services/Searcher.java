@@ -52,14 +52,19 @@ public class Searcher {
     }
 
     /**
+     * Strings are always valid
      * @return true if inValue is a possible value given the FieldType, else false
      */
-    public boolean validateInValue(FieldType ft, String inValue) {
-        switch(ft) {
+    public boolean validateInValue(FieldType fieldType, String inValue) {
+        if (inValue.isEmpty()) {
+            return true;
+        }
+
+        switch(fieldType) {
             case INTEGER:
                 try {
                     Integer.parseInt(inValue);
-                } catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     return false;
                 }
                 break;
@@ -79,50 +84,52 @@ public class Searcher {
     public List<? extends SearchResult> search(String inObject, FieldType ft, String inField, String inValue) {
         switch (inObject) {
             case "organization":
-                return Objects.requireNonNull(searchObjects(organizations.values(), ft, inField, inValue))
+                return searchObjects(organizations.values(), ft, inField, inValue)
                         .map(o -> new OrganizationResult((Organization)o,
                         orgUsers.get(o.getFieldAsInteger("_id")),
                         orgTickets.get(o.getFieldAsInteger("_id")))).collect(Collectors.toList());
             case "user":
-                return Objects.requireNonNull(searchObjects(users.values(), ft, inField, inValue))
+                return searchObjects(users.values(), ft, inField, inValue)
                         .map(u -> new UserResult((User)u,
                         organizations.get(u.getFieldAsInteger("organization_id")),
                         userAssignedTickets.get(u.getFieldAsInteger("_id")),
                         userSubmittedTickets.get(u.getFieldAsInteger("_id")))).collect(Collectors.toList());
             case "ticket":
-                return Objects.requireNonNull(searchObjects(tickets.values(), ft, inField, inValue))
+                return searchObjects(tickets.values(), ft, inField, inValue)
                         .map(t -> new TicketResult((Ticket)t,
                         organizations.get(t.getFieldAsInteger("organization_id")),
                         users.get(t.getFieldAsInteger("assignee_id")),
                         users.get(t.getFieldAsInteger("submitter_id")))).collect(Collectors.toList());
         }
-        return new ArrayList<>();
+        return new ArrayList<>(); //inObject already validated
     }
 
-    private Stream<? extends SearchableObject> searchObjects(Collection<? extends SearchableObject> objs, FieldType ft, String inField, String inValue) {
-        switch(ft) {
+    private Stream<? extends SearchableObject> searchObjects(Collection<? extends SearchableObject> objs, FieldType fieldType, String inField, String inValue) {
+        if (inValue.isEmpty()) {
+            return objs.stream().filter(o -> o.getField(inField).equals(""));
+        }
+
+        switch(fieldType) {
             case STRING:
                 return objs.stream().filter(o -> ((String)o.getField(inField)).equalsIgnoreCase(inValue));
             case INTEGER:
                 int i = Integer.parseInt(inValue);
-                return objs.stream().filter(o -> ((Integer)o.getField(inField)) == i);
+                return objs.stream().filter(o -> ((Integer) o.getField(inField)) == i);
             case BOOLEAN:
                 boolean b = Boolean.parseBoolean(inValue);
-                return objs.stream().filter(o -> ((Boolean)o.getField(inField)) == b);
+                return objs.stream().filter(o -> ((Boolean) o.getField(inField)) == b);
             case TIMESTAMP:
                 DateFormat df = new SimpleDateFormat(JSONLoader.dateFormatString);
                 try {
                     Date d = df.parse(inValue);
                     return objs.stream().filter(o -> o.getField(inField).equals(d));
-                } catch (ParseException e){
+                } catch (ParseException e) { //input and timestamp fields should've already been validated
                     e.printStackTrace();
                 }
-            case SARRAY: //@TODO make custom searchablearraylist type that extend searchableobject?
-                return objs.stream().filter(
-                        o -> {
+            case SARRAY:
+                return objs.stream().filter(o -> {
                             List<?> list = (List<?>)o.getField(inField);
-                            return list.stream().anyMatch(e -> ((String)e).equalsIgnoreCase(inValue));
-                        });
+                            return list.stream().anyMatch(e -> ((String)e).equalsIgnoreCase(inValue));});
         }
         //Will throw only if adding new searchable field types and not correctly adding search support
         throw new IllegalSearchException("Search on a field that is not supported.");

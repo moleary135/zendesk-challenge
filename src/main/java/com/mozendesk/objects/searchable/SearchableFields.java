@@ -89,7 +89,7 @@ public class SearchableFields {
         return null;
     }
 
-    public static String getPrettyPrintFields(String objectType){
+    public static String getPrettyPrintFields(String objectType) {
         StringBuilder sb = new StringBuilder(100);
         switch(objectType) {
             case "organization":
