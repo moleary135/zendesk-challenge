@@ -11,14 +11,11 @@ public class Organization extends SearchableObject{
         return getField("name") + " " + getField("_id");
     }
 
-    //@TODO pretty values aka datetimes and arrays
+    //@TODO also need to add relationships so provs need separate class to represent search results?
     public String prettyString() {
         StringBuilder sb = new StringBuilder(200);
         for (String key : SearchableFields.orgFieldTypes.keySet()) {
-            sb.append(SearchableFields.orgFieldTypes.get(key).getPrettyName())
-                    .append("\t\t")
-                    .append(getField(key))
-                    .append("\n");
+            sb.append(String.format("%-20s %-20s%n", SearchableFields.orgFieldTypes.get(key).getPrettyName(), getField(key)));
         }
         sb.append("\n");
         return sb.toString();

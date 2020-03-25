@@ -18,8 +18,9 @@ public class Ticket extends SearchableObject {
             sb.append(SearchableFields.ticketFieldTypes.get(key).getPrettyName())
                     .append("\t\t")
                     .append(getField(key))
-                    .append("\n\n");
+                    .append("\n");
         }
+        sb.append("\n");
         return sb.toString();
     }
 

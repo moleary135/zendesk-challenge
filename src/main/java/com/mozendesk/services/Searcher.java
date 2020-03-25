@@ -1,31 +1,39 @@
 package com.mozendesk.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.mozendesk.objects.Organization;
 import com.mozendesk.objects.SearchableObject;
+import com.mozendesk.objects.Ticket;
+import com.mozendesk.objects.User;
 import com.mozendesk.objects.searchable.FieldType;
-import com.mozendesk.objects.searchable.SearchableFields;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * @TODO need to make indexes and relationships
+ */
 public class Searcher {
 
-    //@TODO format stream out put and need to get related items for each match
+    //In memory indexes to speed up relationship lookups
+    //Prioritizing performance and simplicity over memory given the smaller set of data
+    private Map<Optional<Integer>, List<Ticket>> orgTickets;
+    private Map<Optional<Integer>, List<User>> orgUsers;
+    private Map<Optional<Integer>, List<Ticket>> userSubmittedTickets;
+    private Map<Optional<Integer>, List<Ticket>> userAssignedTickets;
 
-//    public Stream<? extends SearchableObject> addRelations(List<? extends SearchableObject> objs, String inObject) {
-//        switch(inObject) {
-//            case "organization":
-//                //@TODO add list of users and tickets to print
-//                break;
-//
-//        }
-//        return objs.stream();
-//    }
+    //init indexes
+    public Searcher(Map<String, Ticket> tickets, Map<Integer, User> users) {
+        orgUsers = users.values().stream().collect(Collectors.groupingBy(u -> Optional.ofNullable(u.getFieldAsInteger("organization_id"))));
+        orgTickets = tickets.values().stream().collect(Collectors.groupingBy(u -> Optional.ofNullable(u.getFieldAsInteger("organization_id"))));
+        userSubmittedTickets = tickets.values().stream().collect(Collectors.groupingBy(u -> Optional.ofNullable(u.getFieldAsInteger("submitter_id"))));
+        userAssignedTickets = tickets.values().stream().collect(Collectors.groupingBy(u -> Optional.ofNullable(u.getFieldAsInteger("assignee_id"))));
+    }
 
     /**
      * @return true if inValue is a possible value given the FieldType, else false
@@ -52,7 +60,7 @@ public class Searcher {
         return true;
     }
 
-    public List<? extends SearchableObject> search(List<? extends SearchableObject> objs, FieldType ft, String inField, String inValue) {
+    public List<? extends SearchableObject> search(Collection<? extends SearchableObject> objs, FieldType ft, String inField, String inValue) {
         switch(ft) {
             case STRING:
                 return objs.stream().filter(o -> ((String)o.getField(inField)).equalsIgnoreCase(inValue)).collect(Collectors.toList());

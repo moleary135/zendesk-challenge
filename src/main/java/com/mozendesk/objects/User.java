@@ -18,8 +18,9 @@ public class User extends SearchableObject {
             sb.append(SearchableFields.userFieldTypes.get(key).getPrettyName())
                     .append("\t\t")
                     .append(getField(key))
-                    .append("\n\n");
+                    .append("\n");
         }
+        sb.append("\n");
         return sb.toString();
     }
 

@@ -36,6 +36,17 @@ public abstract class SearchableObject {
         return this.hasField(fieldName) ? this.fields.get(fieldName) : "";
     }
 
+    public Integer getFieldAsInteger(String fieldName) {
+        try {
+            if (this.hasField(fieldName)) {
+                return Integer.parseInt(this.fields.get(fieldName).toString());
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean hasField(String field) {
         return this.fields.containsKey(field);
     }
