@@ -1,12 +1,16 @@
 package com.mozendesk.objects.field;
 
-import java.util.AbstractMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Defines the searchable fields and types on each object that extends SearchableObject
  */
 public class SearchableFields {
+    //Consistent order to print fields in when pretty printing
+    public static final List<String> userFieldPrintList = new ArrayList<>(
+            Arrays.asList("_id", "name", "alias", "url", "external_id", "created_at",
+                    "active", "verified", "shared", "locale", "timezone", "last_login_at", "email",
+                    "phone", "signature", "organization_id", "tags", "suspended", "role"));
 
     public static final Map<String, SearchField> userFieldTypes = Map.ofEntries(
             new AbstractMap.SimpleEntry<>("_id", new SearchField("Id", FieldType.INTEGER)),
@@ -30,6 +34,12 @@ public class SearchableFields {
             new AbstractMap.SimpleEntry<>("role", new SearchField("Role", FieldType.STRING))
     );
 
+    public static final List<String> ticketFieldPrintList = new ArrayList<>(
+            Arrays.asList("_id", "subject", "description", "created_at", "due_at", "url", "external_id",
+                    "priority", "status", "type", "submitter_id", "assignee_id", "organization_id",
+                    "tags", "has_incidents", "via"));
+
+
     public static final Map<String, SearchField> ticketFieldTypes = Map.ofEntries(
             new AbstractMap.SimpleEntry<>("_id", new SearchField("Id", FieldType.STRING)),
             new AbstractMap.SimpleEntry<>("url", new SearchField("Url", FieldType.STRING)),
@@ -48,6 +58,10 @@ public class SearchableFields {
             new AbstractMap.SimpleEntry<>("due_at", new SearchField("Due At", FieldType.TIMESTAMP)),
             new AbstractMap.SimpleEntry<>("via", new SearchField("Via", FieldType.STRING))
     );
+
+    public static final List<String> orgFieldPrintList = new ArrayList<>(
+            Arrays.asList("_id", "name", "url", "details", "created_at",
+                    "external_id", "domain_names", "shared_tickets", "tags"));
 
     public static final Map<String, SearchField> orgFieldTypes = Map.ofEntries(
             new AbstractMap.SimpleEntry<>("_id", new SearchField("Id", FieldType.INTEGER)),

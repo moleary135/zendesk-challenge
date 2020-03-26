@@ -18,7 +18,7 @@ public class Ticket extends SearchableObject {
     //Returns the String of the object containing all fields
     public String prettyString() {
         StringBuilder sb = new StringBuilder(200);
-        for (String key : SearchableFields.ticketFieldTypes.keySet()) {
+        for (String key : SearchableFields.ticketFieldPrintList) {
             sb.append(String.format(DOUBLE_COLUMNS_TEXT, SearchableFields.ticketFieldTypes.get(key).getPrettyName(), getField(key)));
         }
         sb.append("\n");

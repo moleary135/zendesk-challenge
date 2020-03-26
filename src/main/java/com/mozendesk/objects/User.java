@@ -18,7 +18,7 @@ public class User extends SearchableObject {
     //Returns the String of the object containing all fields
     public String prettyString() {
         StringBuilder sb = new StringBuilder(200);
-        for (String key : SearchableFields.userFieldTypes.keySet()) {
+        for (String key : SearchableFields.userFieldPrintList) {
             sb.append(String.format(DOUBLE_COLUMNS_TEXT, SearchableFields.userFieldTypes.get(key).getPrettyName(), getField(key)));
         }
         sb.append("\n");
