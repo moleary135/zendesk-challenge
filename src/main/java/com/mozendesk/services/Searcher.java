@@ -1,6 +1,7 @@
 package com.mozendesk.services;
 
 import com.mozendesk.objects.*;
+import com.mozendesk.objects.field.SearchableFields;
 import com.mozendesk.objects.results.OrganizationResult;
 import com.mozendesk.objects.results.SearchResult;
 import com.mozendesk.objects.results.TicketResult;
@@ -35,23 +36,50 @@ public class Searcher {
     private Map<Integer, List<User>> orgUsers;
     private Map<Integer, List<Ticket>> userSubmittedTickets;
     private Map<Integer, List<Ticket>> userAssignedTickets;
+    public static final Set<String> searchableObjectTypes = Set.of("organization", "ticket", "user");
 
     //init objects and indexes
-    public Searcher(String jsonFolder) {
+    public Searcher() {}
+
+    public void init(String jsonFolder) throws IOException {
         JSONLoader loader = new JSONLoader();
-        try {
-            organizations = loader.loadOrgs(jsonFolder);
-            tickets = loader.loadTickets(jsonFolder);
-            users = loader.loadUsers(jsonFolder);
-        } catch (IOException e) {
-            System.err.printf(JSON_DIR_NOT_FOUND_TEXT, jsonFolder);
-            System.exit(-1);
-        }
+        organizations = loader.loadOrgs(jsonFolder);
+        tickets = loader.loadTickets(jsonFolder);
+        users = loader.loadUsers(jsonFolder);
 
         orgUsers = users.values().stream().filter(u -> u.hasField("organization_id")).collect(Collectors.groupingBy(u -> u.getFieldAsInteger("organization_id")));
         orgTickets = tickets.values().stream().filter(t -> t.hasField("organization_id")).collect(Collectors.groupingBy(u -> u.getFieldAsInteger("organization_id")));
         userSubmittedTickets = tickets.values().stream().filter(t -> t.hasField("submitter_id")).collect(Collectors.groupingBy(u -> u.getFieldAsInteger("submitter_id")));
         userAssignedTickets = tickets.values().stream().filter(t -> t.hasField("assignee_id")).collect(Collectors.groupingBy(u -> u.getFieldAsInteger("assignee_id")));
+    }
+
+
+    public boolean isValidObjectType(String objectType) {
+        return searchableObjectTypes.contains(objectType);
+    }
+
+    /**
+     * Fetches the type of the field on the given object
+     * @return the FieldType of the field on the given object
+     */
+    public FieldType getType(String object, String field) {
+        switch(object) {
+            case "organization":
+                if (SearchableFields.orgFieldTypes.containsKey(field)) {
+                    return SearchableFields.orgFieldTypes.get(field).getType();
+                }
+                break;
+            case "user" :
+                if (SearchableFields.userFieldTypes.containsKey(field)) {
+                    return SearchableFields.userFieldTypes.get(field).getType();
+                }
+                break;
+            case "ticket" :
+                if (SearchableFields.ticketFieldTypes.containsKey(field)) {
+                    return SearchableFields.ticketFieldTypes.get(field).getType();
+                }
+        }
+        throw new IllegalSearchException("Invalid field");
     }
 
     /**

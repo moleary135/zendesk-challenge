@@ -60,28 +60,4 @@ public class SearchableFields {
             new AbstractMap.SimpleEntry<>("shared_tickets", new SearchField("Shared Tickets", FieldType.BOOLEAN)),
             new AbstractMap.SimpleEntry<>("tags", new SearchField("Tags", FieldType.SARRAY))
     );
-
-    /**
-     * Fetches the type of the field on the given object
-     * @return the FieldType of the field on the given object
-     */
-    public static FieldType getType(String object, String field) {
-        switch(object) {
-            case "organization":
-                if (orgFieldTypes.containsKey(field)) {
-                    return orgFieldTypes.get(field).getType();
-                }
-                break;
-            case "user" :
-                if (userFieldTypes.containsKey(field)) {
-                    return userFieldTypes.get(field).getType();
-                }
-                break;
-            case "ticket" :
-                if (ticketFieldTypes.containsKey(field)) {
-                    return ticketFieldTypes.get(field).getType();
-                }
-        }
-        return null;
-    }
 }

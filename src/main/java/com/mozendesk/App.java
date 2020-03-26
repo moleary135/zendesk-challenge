@@ -1,11 +1,12 @@
 package com.mozendesk;
 
+import com.mozendesk.objects.IllegalSearchException;
 import com.mozendesk.objects.results.SearchResult;
 import com.mozendesk.objects.field.FieldType;
-import com.mozendesk.objects.field.SearchableFields;
 import com.mozendesk.services.PrettyPrinter;
 import com.mozendesk.services.Searcher;
 
+import java.io.IOException;
 import java.util.*;
 
 import static com.mozendesk.services.PrettyPrinter.*;
@@ -15,13 +16,17 @@ import static com.mozendesk.services.PrettyPrinter.*;
  * Runs the main program
  */
 public class App {
-    public static final Set<String> searchableObjectTypes = Set.of("organization", "ticket", "user");
-
     //java -jar application.jar [jsonPath]
     public static void main(String[] args) {
         String jsonFolder = args.length <= 0 ? "resources/" : args[0]; //default contains given json files
 
-        Searcher searcher = new Searcher(jsonFolder);
+        Searcher searcher = new Searcher();
+        try {
+            searcher.init(jsonFolder);
+        } catch (IOException e) {
+            System.err.printf(JSON_DIR_NOT_FOUND_TEXT, jsonFolder);
+            System.exit(-1);
+        }
 
         Scanner scanner = new Scanner(System.in);
         System.out.println(STARTUP_TEXT);
@@ -37,14 +42,21 @@ public class App {
 
             if (input.equals("help") || inputArr.length < 2) {
                 System.out.println(HELP_TEXT);
-            } else if (!searchableObjectTypes.contains(inputArr[0])) { //validate object type
+            } else if (!searcher.isValidObjectType(inputArr[0])) { //validate object type
                 System.out.println(INVALID_OBJECT_TYPE_TEXT);
             } else if (inputArr[1].equals("-searchFields")) {
                 System.out.println(PrettyPrinter.getPrettyPrintFields(inputArr[0]));
             } else {
                 inValue = inputArr.length != 3 ? "" : inputArr[2];
                 //validate field on object and value on field
-                FieldType ft = SearchableFields.getType(inputArr[0], inputArr[1]);
+
+                FieldType ft;
+                try {
+                    ft = searcher.getType(inputArr[0], inputArr[1]);
+                } catch (IllegalSearchException e) {
+                    System.out.println(INVALID_FIELD_TYPE_TEXT);
+                    continue;
+                }
                 if (ft == null) {
                     System.out.println(INVALID_FIELD_TYPE_TEXT);
                     continue;

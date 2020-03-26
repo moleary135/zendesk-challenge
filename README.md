@@ -19,6 +19,11 @@ On Windows
     
 The output jar is in build/libs
 
+Can also run tests with
+
+    > ./gradlew clean test #Mac/Linux
+    > gradlew.bat clean test #Windows
+
 ## Usage
 
 	> java -jar jarName.jar [jsonPath]
