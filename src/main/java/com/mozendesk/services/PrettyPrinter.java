@@ -1,6 +1,11 @@
 package com.mozendesk.services;
 
 import com.mozendesk.objects.field.SearchableFields;
+import com.mozendesk.objects.results.SearchResult;
+
+import java.util.List;
+
+import static com.mozendesk.services.JSONLoader.dateFormatString;
 
 /**
  * Keep non-object related output strings in one place
@@ -17,10 +22,13 @@ public class PrettyPrinter {
     public static final String GOODBYE_TEXT = "Goodbye!";
     public static final String INVALID_OBJECT_TYPE_TEXT = "Please specify a valid object type.";
     public static final String INVALID_FIELD_TYPE_TEXT = "Please specify a valid field for this type.";
-    public static final String INVALID_VALUE_FOR_TYPE_TEXT = "Please specify a valid value for the given field.";
+    public static final String INVALID_TIMESTAMP_VALUE_TEXT = "Please specify a timestamp with format: " + dateFormatString;
+    public static final String INVALID_BOOLEAN_VALUE_TEXT = "Please use true or false for boolean values.";
+    public static final String INVALID_INTEGER_VALUE_TEXT = "Please use value integer values for numerical fields";
     public static final String SEARCH_RESULTS_TEXT = "%nFound %d result(s) for search: %s%n%n";
     public static final String JSON_DIR_NOT_FOUND_TEXT = "'organizations.json', 'tickets.json', and/or 'users.json' were not found in given directory '%s'%n";
-    public static final String SEPARATOR_TEXT = "----------------------------------------------------------\n";
+    public static final String SEPARATOR_TEXT = "----------------------------------------------------------\n\n";
+
     /**
      * Returns String of possible search fields for an object.
      */
@@ -39,6 +47,17 @@ public class PrettyPrinter {
             default:
                 return INVALID_OBJECT_TYPE_TEXT;
         }
+        return sb.toString();
+    }
+
+    /**
+     * Given search results, returns a pretty human readable string
+     */
+    public static String getPrettyResults(List<? extends SearchResult> resultList, String input) {
+        StringBuilder sb = new StringBuilder(300);
+        sb.append(String.format(SEARCH_RESULTS_TEXT, resultList.size(), input));
+        sb.append(SEPARATOR_TEXT);
+        resultList.forEach(o -> sb.append(o.prettyString()).append(SEPARATOR_TEXT));
         return sb.toString();
     }
 }

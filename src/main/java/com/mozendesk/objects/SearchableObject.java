@@ -23,7 +23,9 @@ public abstract class SearchableObject {
     //Tell json mapper to use this setter for any fields that do not have a matching setter on the object
     @JsonAnySetter
     public void setField(String fieldName, Object value) {
-        this.fields.put(fieldName, value);
+        if (value != null) {
+            this.fields.put(fieldName, value);
+        }
     }
 
     //Need to specify how to create datetime fields or else the object mapper creates them as Strings.

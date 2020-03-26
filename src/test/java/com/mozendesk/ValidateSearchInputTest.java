@@ -11,6 +11,9 @@ import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Test user input validation
+ */
 public class ValidateSearchInputTest {
 
     public static Searcher searcher;
@@ -55,14 +58,14 @@ public class ValidateSearchInputTest {
     @Test
     public void testValidateInValueInteger() {
         assertEquals(TRUE, searcher.validateInValue(FieldType.INTEGER, ""));
-        assertEquals(FALSE, searcher.validateInValue(FieldType.INTEGER, "testing123"));
+        assertThrows(IllegalSearchException.class, () -> searcher.validateInValue(FieldType.INTEGER, "testing123"));
         assertEquals(TRUE, searcher.validateInValue(FieldType.INTEGER, "123"));
     }
 
     @Test
     public void testValidateInValueBoolean() {
         assertEquals(TRUE, searcher.validateInValue(FieldType.BOOLEAN, ""));
-        assertEquals(FALSE, searcher.validateInValue(FieldType.BOOLEAN, "testing123"));
+        assertThrows(IllegalSearchException.class, () -> searcher.validateInValue(FieldType.BOOLEAN, "testing123"));
         assertEquals(TRUE, searcher.validateInValue(FieldType.BOOLEAN, "True"));
         assertEquals(TRUE, searcher.validateInValue(FieldType.BOOLEAN, "FaLsE"));
     }
@@ -71,7 +74,7 @@ public class ValidateSearchInputTest {
     public void testValidateInValueTimestamp() {
         assertEquals(TRUE, searcher.validateInValue(FieldType.TIMESTAMP, ""));
         assertEquals(TRUE, searcher.validateInValue(FieldType.TIMESTAMP, "2016-04-14T08:32:31 -10:00"));
-        assertEquals(FALSE, searcher.validateInValue(FieldType.TIMESTAMP, "2016/04/14 08:32:31 -10:00"));
+        assertThrows(IllegalSearchException.class, () -> searcher.validateInValue(FieldType.TIMESTAMP, "2016/04/14 08:32:31 -10:00"));
     }
 
     @Test

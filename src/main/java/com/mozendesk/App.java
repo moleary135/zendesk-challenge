@@ -42,37 +42,24 @@ public class App {
 
             if (input.equals("help") || inputArr.length < 2) {
                 System.out.println(HELP_TEXT);
-            } else if (!searcher.isValidObjectType(inputArr[0])) { //validate object type
-                System.out.println(INVALID_OBJECT_TYPE_TEXT);
             } else if (inputArr[1].equals("-searchFields")) {
                 System.out.println(PrettyPrinter.getPrettyPrintFields(inputArr[0]));
             } else {
                 inValue = inputArr.length != 3 ? "" : inputArr[2];
-                //validate field on object and value on field
 
                 FieldType ft;
                 try {
+                    //validate search parameters
                     ft = searcher.getType(inputArr[0], inputArr[1]);
+                    searcher.validateInValue(ft, inValue);
                 } catch (IllegalSearchException e) {
-                    System.out.println(INVALID_FIELD_TYPE_TEXT);
-                    continue;
-                }
-                if (ft == null) {
-                    System.out.println(INVALID_FIELD_TYPE_TEXT);
-                    continue;
-                } else if (!searcher.validateInValue(ft, inValue)) {
-                    System.out.println(INVALID_VALUE_FOR_TYPE_TEXT);
+                    System.out.println(e.getMessage());
                     continue;
                 }
 
                 //search and print results
                 resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
-                System.out.printf(SEARCH_RESULTS_TEXT, resultList.size(), input);
-                System.out.println(SEPARATOR_TEXT);
-                resultList.forEach(o -> {
-                    System.out.print(o.prettyString());
-                    System.out.println(SEPARATOR_TEXT);
-                });
+                System.out.println(PrettyPrinter.getPrettyResults(resultList, input));
             }
         }    while(!input.equals("exit"));
 

@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.mozendesk.services.PrettyPrinter.JSON_DIR_NOT_FOUND_TEXT;
+import static com.mozendesk.services.PrettyPrinter.*;
 
 /**
  * The main search worker.
@@ -54,11 +54,15 @@ public class Searcher {
     }
 
 
+    /**
+     * Validates the object only
+     */
     public boolean isValidObjectType(String objectType) {
         return searchableObjectTypes.contains(objectType);
     }
 
     /**
+     * Validates the object and field inputs
      * Fetches the type of the field on the given object
      * @return the FieldType of the field on the given object
      */
@@ -78,8 +82,11 @@ public class Searcher {
                 if (SearchableFields.ticketFieldTypes.containsKey(field)) {
                     return SearchableFields.ticketFieldTypes.get(field).getType();
                 }
+                break;
+            default:
+                throw new IllegalSearchException(INVALID_OBJECT_TYPE_TEXT);
         }
-        throw new IllegalSearchException("Invalid field");
+        throw new IllegalSearchException(INVALID_FIELD_TYPE_TEXT);
     }
 
     /**
@@ -97,17 +104,20 @@ public class Searcher {
                 try {
                     Integer.parseInt(inValue);
                 } catch (NumberFormatException e) {
-                    return false;
+                    throw new IllegalSearchException(INVALID_INTEGER_VALUE_TEXT);
                 }
                 break;
             case BOOLEAN:
-                return (inValue.equalsIgnoreCase("true") || inValue.equalsIgnoreCase("false"));
+                if (!(inValue.equalsIgnoreCase("true") || inValue.equalsIgnoreCase("false"))) {
+                    throw new IllegalSearchException(INVALID_BOOLEAN_VALUE_TEXT);
+                }
+                break;
             case TIMESTAMP:
                 DateFormat df = new SimpleDateFormat(JSONLoader.dateFormatString);
                 try {
                     df.parse(inValue);
                 } catch (ParseException e) {
-                    return false;
+                    throw new IllegalSearchException(INVALID_TIMESTAMP_VALUE_TEXT);
                 }
         }
         return true;
