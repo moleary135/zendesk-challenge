@@ -43,9 +43,9 @@ public class Searcher {
 
     public void init(String jsonFolder) throws IOException {
         JSONLoader loader = new JSONLoader();
-        organizations = loader.loadOrgs(jsonFolder);
-        tickets = loader.loadTickets(jsonFolder);
-        users = loader.loadUsers(jsonFolder);
+        organizations = loader.loadOrgs(jsonFolder + "/organizations.json");
+        tickets = loader.loadTickets(jsonFolder + "/tickets.json");
+        users = loader.loadUsers(jsonFolder + "/users.json");
 
         orgUsers = users.values().stream().filter(u -> u.hasField("organization_id")).collect(Collectors.groupingBy(u -> u.getFieldAsInteger("organization_id")));
         orgTickets = tickets.values().stream().filter(t -> t.hasField("organization_id")).collect(Collectors.groupingBy(u -> u.getFieldAsInteger("organization_id")));

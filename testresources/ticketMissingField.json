@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "81bdd837-e955-4aa4-a971-ef1e3b373c6d",
+    "url": "http://initech.zendesk.com/api/v2/tickets/81bdd837-e955-4aa4-a971-ef1e3b373c6d.json",
+    "external_id": "dbf801cc-2d9e-403e-9210-4c870240d270",
+    "created_at": "2016-01-13T05:42:04 -11:00",
+    "type": "problem",
+    "subject": "A Catastrophe in Pakistan",
+    "description": "Velit Lorem laboris qui enim occaecat veniam. Qui quis voluptate qui incididunt commodo laborum dolor non anim consectetur incididunt id.",
+    "priority": "normal",
+    "status": "hold",
+    "submitter_id": 74,
+    "assignee_id": 40,
+    "organization_id": 105,
+    "tags": [
+      "California",
+      "Palau",
+      "Kentucky",
+      "North Carolina"
+    ],
+    "has_incidents": true,
+    "via": "voice"
+  }
+]

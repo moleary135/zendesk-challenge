@@ -3,6 +3,9 @@ package com.mozendesk.objects;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.mozendesk.objects.field.SearchableFields;
 
+import static com.mozendesk.services.PrettyPrinter.DOUBLE_COLUMNS_TEXT;
+import static com.mozendesk.services.PrettyPrinter.INDENTED_DOUBLE_COLUMNS_TEXT;
+
 public class User extends SearchableObject {
 
     public User() {}
@@ -16,7 +19,7 @@ public class User extends SearchableObject {
     public String prettyString() {
         StringBuilder sb = new StringBuilder(200);
         for (String key : SearchableFields.userFieldTypes.keySet()) {
-            sb.append(String.format("%-20s %-20s%n", SearchableFields.userFieldTypes.get(key).getPrettyName(), getField(key)));
+            sb.append(String.format(DOUBLE_COLUMNS_TEXT, SearchableFields.userFieldTypes.get(key).getPrettyName(), getField(key)));
         }
         sb.append("\n");
         return sb.toString();
@@ -27,7 +30,7 @@ public class User extends SearchableObject {
         StringBuilder sb = new StringBuilder(200);
         String[] fieldsToPrint = new String[] {"_id", "name"};
         for (String key : fieldsToPrint) {
-            sb.append(String.format("\t%-20s %-20s%n", SearchableFields.userFieldTypes.get(key).getPrettyName(), getField(key)));
+            sb.append(String.format(INDENTED_DOUBLE_COLUMNS_TEXT, SearchableFields.userFieldTypes.get(key).getPrettyName(), getField(key)));
         }
         sb.append("\n");
         return sb.toString();

@@ -21,28 +21,28 @@ public class JSONLoader {
     //format of dates from json files and expected matching format for search input
     public final static String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss X";
 
-    public Map<Integer, Organization> loadOrgs(String jsonFolder) throws IOException {
+    public Map<Integer, Organization> loadOrgs(String orgFile) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         List<Organization> orgs =  mapper.readValue(
-                new File(jsonFolder + "/organizations.json"),
+                new File(orgFile),
                 new TypeReference<List<Organization>>(){});
         return orgs.stream().collect(
                 Collectors.toMap(o -> (Integer)o.getField("_id"), Function.identity()));
     }
 
-    public Map<String, Ticket> loadTickets(String jsonFolder) throws IOException {
+    public Map<String, Ticket> loadTickets(String ticketFile) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         List<Ticket> tickets = mapper.readValue(
-                new File(jsonFolder + "/tickets.json"),
+                new File(ticketFile),
                 new TypeReference<List<Ticket>>(){});
         return tickets.stream().collect(
                 Collectors.toMap(o -> (String)o.getField("_id"), Function.identity()));
     }
 
-    public Map<Integer, User> loadUsers(String jsonFolder) throws IOException {
+    public Map<Integer, User> loadUsers(String userFile) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         List<User> users = mapper.readValue(
-                new File(jsonFolder + "/users.json"),
+                new File(userFile),
                 new TypeReference<List<User>>(){});
         return users.stream().collect(
                 Collectors.toMap(o -> (Integer)o.getField("_id"), Function.identity()));

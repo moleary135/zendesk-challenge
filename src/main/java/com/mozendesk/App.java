@@ -36,13 +36,15 @@ public class App {
         List<? extends SearchResult> resultList;
         String inValue;
 
-        do {
-            input = scanner.nextLine();
-            inputArr = input.split(" ", 3);
+        input = scanner.nextLine();
+        inputArr = input.split(" ", 3);
+
+
+        while(!input.equals("exit")) {
 
             if (input.equals("help") || inputArr.length < 2) {
                 System.out.println(HELP_TEXT);
-            } else if (inputArr[1].equals("-searchFields")) {
+            } else if (inputArr[1].equals("-fields")) {
                 System.out.println(PrettyPrinter.getPrettyPrintFields(inputArr[0]));
             } else {
                 inValue = inputArr.length != 3 ? "" : inputArr[2];
@@ -61,7 +63,10 @@ public class App {
                 resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
                 System.out.println(PrettyPrinter.getPrettyResults(resultList, input));
             }
-        }    while(!input.equals("exit"));
+
+            input = scanner.nextLine();
+            inputArr = input.split(" ", 3);
+        }
 
         System.out.println(GOODBYE_TEXT);
         scanner.close();

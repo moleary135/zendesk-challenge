@@ -38,6 +38,10 @@ public abstract class SearchableObject {
         return this.hasField(fieldName) ? this.fields.get(fieldName) : "";
     }
 
+    /**
+     * @return null if unable to parse value to integer because you can try
+     * to convert any field to an Integer, but if the value isn't an integer will fail
+     */
     public Integer getFieldAsInteger(String fieldName) {
         try {
             if (this.hasField(fieldName)) {

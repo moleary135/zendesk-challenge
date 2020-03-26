@@ -17,7 +17,7 @@ public class PrettyPrinter {
             "Possible values for object are 'organization', 'user', and 'ticket'.\n" +
             "Leaving searchValue blank with find matches whose given searchField is empty." +
             "To see possible search fields for a specific object type use:\n" +
-            "\t object -searchFields\n";
+            "\t object -fields\n";
     public static final String STARTUP_TEXT = "\nWelcome to Zendesk Search\n\n" + HELP_TEXT;
     public static final String GOODBYE_TEXT = "Goodbye!";
     public static final String INVALID_OBJECT_TYPE_TEXT = "Please specify a valid object type.";
@@ -28,21 +28,27 @@ public class PrettyPrinter {
     public static final String SEARCH_RESULTS_TEXT = "%nFound %d result(s) for search: %s%n%n";
     public static final String JSON_DIR_NOT_FOUND_TEXT = "'organizations.json', 'tickets.json', and/or 'users.json' were not found in given directory '%s'%n";
     public static final String SEPARATOR_TEXT = "----------------------------------------------------------\n\n";
+    public static final String DOUBLE_COLUMNS_TEXT = "%-20s %-20s%n";
+    public static final String INDENTED_DOUBLE_COLUMNS_TEXT = "\t%-20s %-20s%n";
 
     /**
      * Returns String of possible search fields for an object.
      */
     public static String getPrettyPrintFields(String objectType) {
         StringBuilder sb = new StringBuilder(100);
+        sb.append(SEPARATOR_TEXT);
         switch(objectType) {
             case "organization":
-                SearchableFields.orgFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                SearchableFields.orgFieldTypes.keySet().forEach(key ->
+                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.orgFieldTypes.get(key).getType())));
                 break;
             case "user":
-                SearchableFields.userFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                SearchableFields.userFieldTypes.keySet().forEach(key ->
+                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.userFieldTypes.get(key).getType())));
                 break;
             case "ticket":
-                SearchableFields.ticketFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                SearchableFields.ticketFieldTypes.keySet().forEach(key ->
+                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.ticketFieldTypes.get(key).getType())));
                 break;
             default:
                 return INVALID_OBJECT_TYPE_TEXT;

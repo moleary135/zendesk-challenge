@@ -44,7 +44,7 @@ searchField - a field on an object
 
 To see a list of possible search fields for a given object type:
     
-	> object -searchFields
+	> object -fields
 searchValue - the value to match, or if omitted matches on empty values
  
 The searchValue includes everything after the searchField, so do not put quotes around multi word searches.

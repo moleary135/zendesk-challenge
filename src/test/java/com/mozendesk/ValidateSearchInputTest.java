@@ -19,7 +19,7 @@ public class ValidateSearchInputTest {
     public static Searcher searcher;
 
     @BeforeAll
-    public static void setUp() throws Exception {
+    public static void setUp() {
         searcher = new Searcher();
     }
 
@@ -33,13 +33,55 @@ public class ValidateSearchInputTest {
         assertEquals(FALSE, searcher.isValidObjectType("users"));
     }
 
+    // May seem obnoxious, but catches pesky copy paste errors.
     @Test
     public void testValidGetType() {
         assertEquals(FieldType.INTEGER, searcher.getType("organization", "_id"));
+        assertEquals(FieldType.STRING, searcher.getType("organization", "url"));
+        assertEquals(FieldType.STRING, searcher.getType("organization", "external_id"));
+        assertEquals(FieldType.STRING, searcher.getType("organization", "name"));
+        assertEquals(FieldType.SARRAY, searcher.getType("organization", "domain_names"));
+        assertEquals(FieldType.TIMESTAMP, searcher.getType("organization", "created_at"));
+        assertEquals(FieldType.STRING, searcher.getType("organization", "details"));
+        assertEquals(FieldType.BOOLEAN, searcher.getType("organization", "shared_tickets"));
+        assertEquals(FieldType.SARRAY, searcher.getType("organization", "tags"));
+
         assertEquals(FieldType.STRING, searcher.getType("ticket", "_id"));
+        assertEquals(FieldType.STRING, searcher.getType("ticket", "url"));
+        assertEquals(FieldType.STRING, searcher.getType("ticket", "external_id"));
+        assertEquals(FieldType.TIMESTAMP, searcher.getType("ticket", "created_at"));
+        assertEquals(FieldType.STRING, searcher.getType("ticket", "subject"));
+        assertEquals(FieldType.STRING, searcher.getType("ticket", "description"));
+        assertEquals(FieldType.STRING, searcher.getType("ticket", "priority"));
+        assertEquals(FieldType.STRING, searcher.getType("ticket", "status"));
+        assertEquals(FieldType.STRING, searcher.getType("ticket", "type"));
+        assertEquals(FieldType.INTEGER, searcher.getType("ticket", "submitter_id"));
+        assertEquals(FieldType.INTEGER, searcher.getType("ticket", "assignee_id"));
+        assertEquals(FieldType.INTEGER, searcher.getType("ticket", "organization_id"));
+        assertEquals(FieldType.SARRAY, searcher.getType("ticket", "tags"));
+        assertEquals(FieldType.BOOLEAN, searcher.getType("ticket", "has_incidents"));
+        assertEquals(FieldType.TIMESTAMP, searcher.getType("ticket", "due_at"));
+        assertEquals(FieldType.STRING, searcher.getType("ticket", "via"));
+
+        assertEquals(FieldType.INTEGER, searcher.getType("user", "_id"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "url"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "external_id"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "name"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "alias"));
+        assertEquals(FieldType.TIMESTAMP, searcher.getType("user", "created_at"));
+        assertEquals(FieldType.BOOLEAN, searcher.getType("user", "active"));
+        assertEquals(FieldType.BOOLEAN, searcher.getType("user", "verified"));
+        assertEquals(FieldType.BOOLEAN, searcher.getType("user", "shared"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "locale"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "timezone"));
+        assertEquals(FieldType.TIMESTAMP, searcher.getType("user", "last_login_at"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "email"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "phone"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "signature"));
         assertEquals(FieldType.INTEGER, searcher.getType("user", "organization_id"));
         assertEquals(FieldType.SARRAY, searcher.getType("user", "tags"));
-        assertEquals(FieldType.TIMESTAMP, searcher.getType("user", "last_login_at"));
+        assertEquals(FieldType.BOOLEAN, searcher.getType("user", "suspended"));
+        assertEquals(FieldType.STRING, searcher.getType("user", "role"));
     }
 
     @Test
