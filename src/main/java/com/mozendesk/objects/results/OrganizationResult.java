@@ -1,8 +1,16 @@
-package com.mozendesk.objects;
+package com.mozendesk.objects.results;
+
+import com.mozendesk.objects.Organization;
+import com.mozendesk.objects.Ticket;
+import com.mozendesk.objects.User;
 
 import java.util.List;
 
-public class OrganizationResult extends SearchResult{
+/**
+ * A result of a search of Organization objects
+ * Contains the users and tickets that belong to the specified organization.
+ */
+public class OrganizationResult extends SearchResult {
     public Organization organization;
     public List<User> users;
     public List<Ticket> tickets;

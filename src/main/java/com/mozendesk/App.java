@@ -1,8 +1,9 @@
 package com.mozendesk;
 
-import com.mozendesk.objects.*;
-import com.mozendesk.objects.searchable.FieldType;
-import com.mozendesk.objects.searchable.SearchableFields;
+import com.mozendesk.objects.results.SearchResult;
+import com.mozendesk.objects.field.FieldType;
+import com.mozendesk.objects.field.SearchableFields;
+import com.mozendesk.services.PrettyPrinter;
 import com.mozendesk.services.Searcher;
 
 import java.util.*;
@@ -13,9 +14,8 @@ import static com.mozendesk.services.PrettyPrinter.*;
  * @TODO documentation including readme
  * @TODO unit tests!!!! - empty searches "", good searches, bad search params of each part
  * @TODO generalize leftovers
- * @TODO clean up code style - lint
- * @TODO summary strings on objects, add separater between objects in list ------? maybe or better spacing
- * @TODO optimize performance?
+ * @TODO summary strings on objects, add separator between objects in list ------? maybe or better spacing
+ * If using gradle, need to make sure JAVA_HOME is between Java versions 7-13
  * Runs the main program
  */
 public class App {
@@ -44,7 +44,7 @@ public class App {
             } else if (!searchableObjectTypes.contains(inputArr[0])) { //validate object type
                 System.out.println(INVALID_OBJECT_TYPE_TEXT);
             } else if (inputArr[1].equals("-searchFields")) {
-                System.out.println(SearchableFields.getPrettyPrintFields(inputArr[0]));
+                System.out.println(PrettyPrinter.getPrettyPrintFields(inputArr[0]));
             } else {
                 inValue = inputArr.length != 3 ? "" : inputArr[2];
                 //validate field on object and value on field

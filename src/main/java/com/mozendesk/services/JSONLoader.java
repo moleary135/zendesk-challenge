@@ -15,9 +15,10 @@ import java.util.stream.Collectors;
 
 /**
  * Utility class to map json data to objects.
+ * Create object maps keyed on _id field
  */
 public class JSONLoader {
-
+    //format of dates from json files and expected matching format for search input
     public final static String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss X";
 
     public Map<Integer, Organization> loadOrgs(String jsonFolder) throws IOException {

@@ -1,6 +1,10 @@
 package com.mozendesk.services;
 
-//Keep main output strings in one place (with the exception of field names in SearchableFields)
+import com.mozendesk.objects.field.SearchableFields;
+
+/**
+ * Keep non-object related output strings in one place
+ */
 public class PrettyPrinter {
     public static final String HELP_TEXT = "Instructions: \nType 'exit' at anytime to quit the program.\n" +
             "Search for objects using the format:\n" +
@@ -16,4 +20,25 @@ public class PrettyPrinter {
     public static final String INVALID_VALUE_FOR_TYPE_TEXT = "Please specify a valid value for the given field.";
     public static final String SEARCH_RESULTS_TEXT = "%nFound %d result(s) for search: %s%n%n";
     public static final String JSON_DIR_NOT_FOUND_TEXT = "'organizations.json', 'tickets.json', and/or 'users.json' were not found in given directory '%s'%n";
+
+    /**
+     * Returns String of possible search fields for an object.
+     */
+    public static String getPrettyPrintFields(String objectType) {
+        StringBuilder sb = new StringBuilder(100);
+        switch(objectType) {
+            case "organization":
+                SearchableFields.orgFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                break;
+            case "user":
+                SearchableFields.userFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                break;
+            case "ticket":
+                SearchableFields.ticketFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
+                break;
+            default:
+                return INVALID_OBJECT_TYPE_TEXT;
+        }
+        return sb.toString();
+    }
 }

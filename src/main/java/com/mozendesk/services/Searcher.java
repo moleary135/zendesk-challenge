@@ -1,24 +1,27 @@
 package com.mozendesk.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.mozendesk.objects.*;
-import com.mozendesk.objects.searchable.FieldType;
+import com.mozendesk.objects.results.OrganizationResult;
+import com.mozendesk.objects.results.SearchResult;
+import com.mozendesk.objects.results.TicketResult;
+import com.mozendesk.objects.results.UserResult;
+import com.mozendesk.objects.field.FieldType;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.mozendesk.services.PrettyPrinter.JSON_DIR_NOT_FOUND_TEXT;
-import static com.mozendesk.services.PrettyPrinter.SEARCH_RESULTS_TEXT;
 
 /**
- * @TODO need to make indexes and relationships
+ * The main search worker.
+ *
+ * Collections and indexes stored in memory prioritizing performance and
+ * simplicity over memory given the smaller set of data
  */
 public class Searcher {
 
@@ -26,8 +29,8 @@ public class Searcher {
     private Map<String, Ticket> tickets = null;
     private Map<Integer, User> users = null;
 
-    //In memory indexes to speed up relationship lookups
-    //Prioritizing performance and simplicity over memory given the smaller set of data
+    //In memory indexes to speed up relationship lookups.
+    //Otherwise would have to do many linear passes which yields really bad performance.
     private Map<Integer, List<Ticket>> orgTickets;
     private Map<Integer, List<User>> orgUsers;
     private Map<Integer, List<Ticket>> userSubmittedTickets;
@@ -52,8 +55,9 @@ public class Searcher {
     }
 
     /**
-     * Strings are always valid
+     * Validates the search value against the field type
      * @return true if inValue is a possible value given the FieldType, else false
+     * Since input is a String by default, Strings (including empty "") are always valid
      */
     public boolean validateInValue(FieldType fieldType, String inValue) {
         if (inValue.isEmpty()) {
@@ -81,29 +85,38 @@ public class Searcher {
         return true;
     }
 
-    public List<? extends SearchResult> search(String inObject, FieldType ft, String inField, String inValue) {
+    /**
+     * The public search call that returns a List of SearchResults given a valid search
+     * First filters based on search parameters.
+     * Then maps to the corresponding SearchResult objects, which includes lookups for related objects.
+     */
+    public List<? extends SearchResult> search(String inObject, FieldType fieldType, String inField, String inValue) {
         switch (inObject) {
             case "organization":
-                return searchObjects(organizations.values(), ft, inField, inValue)
+                return searchObjects(organizations.values(), fieldType, inField, inValue)
                         .map(o -> new OrganizationResult((Organization)o,
                         orgUsers.get(o.getFieldAsInteger("_id")),
                         orgTickets.get(o.getFieldAsInteger("_id")))).collect(Collectors.toList());
             case "user":
-                return searchObjects(users.values(), ft, inField, inValue)
+                return searchObjects(users.values(), fieldType, inField, inValue)
                         .map(u -> new UserResult((User)u,
                         organizations.get(u.getFieldAsInteger("organization_id")),
                         userAssignedTickets.get(u.getFieldAsInteger("_id")),
                         userSubmittedTickets.get(u.getFieldAsInteger("_id")))).collect(Collectors.toList());
             case "ticket":
-                return searchObjects(tickets.values(), ft, inField, inValue)
+                return searchObjects(tickets.values(), fieldType, inField, inValue)
                         .map(t -> new TicketResult((Ticket)t,
                         organizations.get(t.getFieldAsInteger("organization_id")),
                         users.get(t.getFieldAsInteger("assignee_id")),
                         users.get(t.getFieldAsInteger("submitter_id")))).collect(Collectors.toList());
         }
-        return new ArrayList<>(); //inObject already validated
+        return new ArrayList<>(); //inObject already validated so will hit return in switch
     }
 
+    /**
+     * Filters a collection based on the fieldType and search inValue
+     * @return The filtered stream of SearchableObjects
+     */
     private Stream<? extends SearchableObject> searchObjects(Collection<? extends SearchableObject> objs, FieldType fieldType, String inField, String inValue) {
         if (inValue.isEmpty()) {
             return objs.stream().filter(o -> o.getField(inField).equals(""));

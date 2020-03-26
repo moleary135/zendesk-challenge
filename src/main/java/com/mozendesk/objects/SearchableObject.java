@@ -8,17 +8,19 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.Set;
 
+/**
+ * Parent class for any object that can be searched.
+ */
 public abstract class SearchableObject {
-    //field name is the key, value is the object created by json mapper
+    //field name is the key, value is the object created from the json string
     private HashMap<String, Object> fields;
 
     public SearchableObject() {
         this.fields = new HashMap<>();
     }
 
-    //Tell json mapper to use this setter for any fields the do not have a matching field on the object
+    //Tell json mapper to use this setter for any fields that do not have a matching setter on the object
     @JsonAnySetter
     public void setField(String fieldName, Object value) {
         this.fields.put(fieldName, value);
@@ -48,11 +50,6 @@ public abstract class SearchableObject {
     public boolean hasField(String field) {
         return this.fields.containsKey(field);
     }
-
-    public HashMap<String, Object> getFields() {
-        return this.fields;
-    }
-
 
     public void setDateTimeField(String fieldName, Object jsonDate) {
         DateFormat df = new SimpleDateFormat(JSONLoader.dateFormatString);

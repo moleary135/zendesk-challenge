@@ -1,11 +1,12 @@
 package com.mozendesk.objects;
 
-import com.mozendesk.objects.searchable.SearchableFields;
+import com.mozendesk.objects.field.SearchableFields;
 
 public class Organization extends SearchableObject{
 
     public Organization() {}
 
+    //Returns the String of the object containing all fields
     public String prettyString() {
         StringBuilder sb = new StringBuilder(200);
         for (String key : SearchableFields.orgFieldTypes.keySet()) {
@@ -15,7 +16,7 @@ public class Organization extends SearchableObject{
         return sb.toString();
     }
 
-    //Only show most important fields when looking at in terms of relationship to ticket or user
+    //Returns the String of the object with only most important fields for use in object relationships
     public String toSummaryString() {
         StringBuilder sb = new StringBuilder(200);
         String[] fieldsToPrint = new String[] {"_id", "name"};

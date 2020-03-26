@@ -1,16 +1,13 @@
-package com.mozendesk.objects.searchable;
-
-import com.mozendesk.services.PrettyPrinter;
+package com.mozendesk.objects.field;
 
 import java.util.AbstractMap;
 import java.util.Map;
 
 /**
- * Defines the searchable fields and types on each object type
+ * Defines the searchable fields and types on each object that extends SearchableObject
  */
 public class SearchableFields {
 
-    //Defines the names and types of the searchable fields for User objects
     public static final Map<String, SearchField> userFieldTypes = Map.ofEntries(
             new AbstractMap.SimpleEntry<>("_id", new SearchField("Id", FieldType.INTEGER)),
             new AbstractMap.SimpleEntry<>("url", new SearchField("Url", FieldType.STRING)),
@@ -66,8 +63,7 @@ public class SearchableFields {
 
     /**
      * Fetches the type of the field on the given object
-     * @return the FieldType of the field on the given object or
-     * @throws if nonsensical values
+     * @return the FieldType of the field on the given object
      */
     public static FieldType getType(String object, String field) {
         switch(object) {
@@ -87,25 +83,5 @@ public class SearchableFields {
                 }
         }
         return null;
-    }
-
-    public static String getPrettyPrintFields(String objectType) {
-        StringBuilder sb = new StringBuilder(100);
-        switch(objectType) {
-            case "organization":
-                orgFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
-                break;
-            case "user":
-                userFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
-                break;
-            case "ticket":
-                ticketFieldTypes.keySet().forEach(key -> sb.append(key).append(" "));
-                break;
-            default:
-                return PrettyPrinter.INVALID_OBJECT_TYPE_TEXT;
-        }
-
-
-        return sb.toString();
     }
 }
