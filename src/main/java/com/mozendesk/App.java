@@ -11,11 +11,7 @@ import java.util.*;
 import static com.mozendesk.services.PrettyPrinter.*;
 
 /**
- * @TODO documentation including readme
- * @TODO unit tests!!!! - empty searches "", good searches, bad search params of each part
- * @TODO generalize leftovers
- * @TODO summary strings on objects, add separator between objects in list ------? maybe or better spacing
- * If using gradle, need to make sure JAVA_HOME is between Java versions 7-13
+ * Note: If using gradle, need to make sure JAVA_HOME doesn't point to Java 14!
  * Runs the main program
  */
 public class App {

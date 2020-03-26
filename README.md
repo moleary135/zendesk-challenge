@@ -2,9 +2,22 @@
 
 Simple search program to search through the objects defined in the .json files located under resources.
 
-To create a fat jar using gradle
+## Build
+Note: If trying to compile with gradle or gradlew, Gradle is currently incompatible with Java 14, so please make sure your JAVA_HOME is set for a version between [7-13]!
 
-	> gradle fatJar
+    > export JAVA_HOME=`/usr/libexec/java_home -v 13` #sets to java 13 
+    > export PATH=$JAVA_HOME/bin:$PATH 
+    
+The build uses Gradle to create a fat jar. A Gradle wrapper is included in the source if you don't already have Gradle and will handle fetching dependencies.
+
+To build on Mac/Linux
+
+    > ./gradlew
+On Windows
+
+    > gradlew.bat
+    
+The output jar is in build/libs
 
 ## Usage
 
@@ -27,7 +40,7 @@ searchField - a field on an object
 To see a list of possible search fields for a given object type:
     
 	> object -searchFields
-searchValue - the value to match, or if omitted searches for where the given searchField has no value set
+searchValue - the value to match, or if omitted matches on empty values
  
 The searchValue includes everything after the searchField, so do not put quotes around multi word searches.
 
@@ -50,7 +63,6 @@ Examples
     > user tags Madison    					 # returns all users whose tags contain Madison
     > ticket due_at						 # returns all tickets whose due_at field is empty
 
-Note: If trying to compile with gradle or gradlew, Gradle is currently incompatible with Java 14!
 
 Versions Used:
 
