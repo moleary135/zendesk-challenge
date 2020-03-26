@@ -39,7 +39,6 @@ public class TicketResult extends SearchResult {
         } else {
             sb.append("Submitted By:\n").append(submittedBy.toSummaryString());
         }
-        sb.append("\n");
         return sb.toString();
     }
 }

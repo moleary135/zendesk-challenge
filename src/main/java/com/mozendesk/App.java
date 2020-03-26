@@ -60,7 +60,11 @@ public class App {
                 //search and print results
                 resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
                 System.out.printf(SEARCH_RESULTS_TEXT, resultList.size(), input);
-                resultList.forEach(o -> System.out.println(o.prettyString()));
+                System.out.println(SEPARATOR_TEXT);
+                resultList.forEach(o -> {
+                    System.out.print(o.prettyString());
+                    System.out.println(SEPARATOR_TEXT);
+                });
             }
         }    while(!input.equals("exit"));
 

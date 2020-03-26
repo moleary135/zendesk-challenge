@@ -27,7 +27,7 @@ public class Ticket extends SearchableObject {
         StringBuilder sb = new StringBuilder(200);
         String[] fieldsToPrint = new String[] {"_id", "subject", "status"};
         for (String key : fieldsToPrint) {
-            sb.append(String.format("%-20s %-20s%n", SearchableFields.ticketFieldTypes.get(key).getPrettyName(), getField(key)));
+            sb.append(String.format("\t%-20s %-20s%n", SearchableFields.ticketFieldTypes.get(key).getPrettyName(), getField(key)));
         }
         sb.append("\n");
         return sb.toString();

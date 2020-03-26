@@ -20,7 +20,7 @@ public class PrettyPrinter {
     public static final String INVALID_VALUE_FOR_TYPE_TEXT = "Please specify a valid value for the given field.";
     public static final String SEARCH_RESULTS_TEXT = "%nFound %d result(s) for search: %s%n%n";
     public static final String JSON_DIR_NOT_FOUND_TEXT = "'organizations.json', 'tickets.json', and/or 'users.json' were not found in given directory '%s'%n";
-
+    public static final String SEPARATOR_TEXT = "----------------------------------------------------------\n";
     /**
      * Returns String of possible search fields for an object.
      */

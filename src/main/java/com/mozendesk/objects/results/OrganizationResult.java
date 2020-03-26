@@ -35,7 +35,6 @@ public class OrganizationResult extends SearchResult {
             sb.append("Tickets:\n");
             tickets.forEach(t -> sb.append(t.toSummaryString()));
         }
-        sb.append("\n");
         return sb.toString();
     }
 }

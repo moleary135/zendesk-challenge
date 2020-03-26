@@ -27,7 +27,7 @@ public class User extends SearchableObject {
         StringBuilder sb = new StringBuilder(200);
         String[] fieldsToPrint = new String[] {"_id", "name"};
         for (String key : fieldsToPrint) {
-            sb.append(String.format("%-20s %-20s%n", SearchableFields.userFieldTypes.get(key).getPrettyName(), getField(key)));
+            sb.append(String.format("\t%-20s %-20s%n", SearchableFields.userFieldTypes.get(key).getPrettyName(), getField(key)));
         }
         sb.append("\n");
         return sb.toString();

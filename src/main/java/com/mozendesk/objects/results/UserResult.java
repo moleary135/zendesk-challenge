@@ -44,7 +44,6 @@ public class UserResult extends SearchResult {
             sb.append("Submitted Tickets:\n");
             submittedTickets.forEach(t -> sb.append(t.toSummaryString()));
         }
-        sb.append("\n");
         return sb.toString();
     }
 }
