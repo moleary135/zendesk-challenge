@@ -53,7 +53,6 @@ public class Searcher {
         userAssignedTickets = tickets.values().stream().filter(t -> t.hasField("assignee_id")).collect(Collectors.groupingBy(u -> u.getFieldAsInteger("assignee_id")));
     }
 
-
     /**
      * Validates the object only
      */
@@ -148,7 +147,7 @@ public class Searcher {
                         users.get(t.getFieldAsInteger("assignee_id")),
                         users.get(t.getFieldAsInteger("submitter_id")))).collect(Collectors.toList());
         }
-        return new ArrayList<>(); //inObject already validated so will hit return in switch
+        throw new IllegalSearchException(INVALID_OBJECT_TYPE_TEXT); //inObject already validated so will hit return in switch
     }
 
     /**
@@ -159,30 +158,32 @@ public class Searcher {
         if (inValue.isEmpty()) {
             return objs.stream().filter(o -> o.getField(inField).equals(""));
         }
-
+        //else filter out nonexistent values
+        Stream<? extends SearchableObject> stream = objs.stream().filter(o -> !o.getField(inField).equals(""));
         switch(fieldType) {
             case STRING:
-                return objs.stream().filter(o -> ((String)o.getField(inField)).equalsIgnoreCase(inValue));
+                return stream.filter(o -> ((String)o.getField(inField)).equalsIgnoreCase(inValue));
             case INTEGER:
                 int i = Integer.parseInt(inValue);
-                return objs.stream().filter(o -> ((Integer) o.getField(inField)) == i);
+                return stream.filter(o -> ((Integer) o.getField(inField)) == i);
             case BOOLEAN:
                 boolean b = Boolean.parseBoolean(inValue);
-                return objs.stream().filter(o -> ((Boolean) o.getField(inField)) == b);
+                return stream.filter(o -> ((Boolean) o.getField(inField)) == b);
             case TIMESTAMP:
                 DateFormat df = new SimpleDateFormat(JSONLoader.dateFormatString);
                 try {
                     Date d = df.parse(inValue);
-                    return objs.stream().filter(o -> o.getField(inField).equals(d));
+                    return stream.filter(o -> o.getField(inField).equals(d));
                 } catch (ParseException e) { //input and timestamp fields should've already been validated
-                    e.printStackTrace();
+                    throw new IllegalSearchException(INVALID_TIMESTAMP_VALUE_TEXT);
                 }
             case SARRAY:
-                return objs.stream().filter(o -> {
+                return stream.filter(o -> {
                             List<?> list = (List<?>)o.getField(inField);
                             return list.stream().anyMatch(e -> ((String)e).equalsIgnoreCase(inValue));});
         }
-        //Will throw only if adding new searchable field types and not correctly adding search support
-        throw new IllegalSearchException("Search on a field that is not supported.");
+        //After validating input using methods above, should only throw when adding new searchable field types
+        // and not correctly adding search support
+        throw new IllegalSearchException(INVALID_FIELD_TYPE_TEXT);
     }
 }
