@@ -1,4 +1,4 @@
-#Zendesk Coding Challenge
+# Zendesk Coding Challenge
 
 Simple search program to search through the objects defined in the .json files located under resources.
 
