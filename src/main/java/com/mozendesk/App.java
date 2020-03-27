@@ -31,44 +31,40 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         System.out.println(STARTUP_TEXT);
 
-        String input;
-        String[] inputArr;
-        List<? extends SearchResult> resultList;
-        String inValue;
-
-        input = scanner.nextLine();
-        inputArr = input.split(" ", 3);
-
+        String input = scanner.nextLine();
 
         while(!input.equals("exit")) {
-
-            if (input.equals("help") || inputArr.length < 2) {
-                System.out.println(HELP_TEXT);
-            } else if (inputArr[1].equals("-fields")) {
-                System.out.println(PrettyPrinter.getPrettyPrintFields(inputArr[0]));
-            } else {
-                inValue = inputArr.length != 3 ? "" : inputArr[2];
-
-                FieldType ft;
-                try {
-                    //validate search parameters
-                    ft = searcher.getType(inputArr[0], inputArr[1]);
-                    searcher.validateInValue(ft, inValue);
-
-                    //search and print results
-                    resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
-                    System.out.println(PrettyPrinter.getPrettyResults(resultList, input));
-                } catch (IllegalSearchException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-
+            System.out.println(doSearch(input, searcher));
             input = scanner.nextLine();
-            inputArr = input.split(" ", 3);
         }
 
         System.out.println(GOODBYE_TEXT);
         scanner.close();
         System.exit(0);
+    }
+
+    public static String doSearch(String input, Searcher searcher) {
+
+        List<? extends SearchResult> resultList;
+        String[] inputArr = input.split(" ", 3);
+
+        if (input.equals("help") || inputArr.length < 2) {
+            return HELP_TEXT;
+        } else if (inputArr[1].equals("-fields")) {
+           return PrettyPrinter.getPrettyPrintFields(inputArr[0]);
+        } else {
+            String inValue = inputArr.length != 3 ? "" : inputArr[2];
+            try {
+                //validate search parameters
+                FieldType ft = searcher.getType(inputArr[0], inputArr[1]);
+                searcher.validateInValue(ft, inValue);
+
+                //search and print results
+                resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
+                return PrettyPrinter.getPrettyResults(resultList, input);
+            } catch (IllegalSearchException e) {
+                return e.getMessage();
+            }
+        }
     }
 }
