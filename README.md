@@ -3,23 +3,23 @@
 Simple search program to search through the objects defined in the .json files located under resources.
 
 ## Build
-Note: If trying to compile with gradle or gradlew, Gradle is currently incompatible with Java 14, so please make sure your JAVA_HOME is set for a version between [7-13]!
+Note: If trying to compile with gradle or gradlew, please make sure your JAVA_HOME is set to Java 13
 
     > export JAVA_HOME=`/usr/libexec/java_home -v 13` #sets to java 13 
     > export PATH=$JAVA_HOME/bin:$PATH 
-    
+
 The build uses Gradle to create a fat jar. A Gradle wrapper is included in the source if you don't already have Gradle and will handle fetching dependencies.
 
-To build on Mac/Linux
+Mac/Linux
 
     > ./gradlew
-On Windows
+Windows
 
     > gradlew.bat
     
-The output jar is in build/libs
+The jar is output to the build/libs folder.
 
-Can also run tests with
+To run unit tests:
 
     > ./gradlew clean test #Mac/Linux
     > gradlew.bat clean test #Windows
@@ -60,7 +60,7 @@ Boolean - true | false
 
 Integer - a valid integer
 
-Array - match if any of the array values matches the input value
+Array - matches if any of the array values matches the input value
 
 Examples
 
@@ -76,3 +76,5 @@ Java 13.0.2
 Gradle 6.2.2
 
 Jackson (FasterXML) 2.6.3
+
+JUnit 5.3.1
