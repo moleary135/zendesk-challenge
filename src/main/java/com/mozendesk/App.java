@@ -54,14 +54,13 @@ public class App {
                     //validate search parameters
                     ft = searcher.getType(inputArr[0], inputArr[1]);
                     searcher.validateInValue(ft, inValue);
+
+                    //search and print results
+                    resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
+                    System.out.println(PrettyPrinter.getPrettyResults(resultList, input));
                 } catch (IllegalSearchException e) {
                     System.out.println(e.getMessage());
-                    continue;
                 }
-
-                //search and print results
-                resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
-                System.out.println(PrettyPrinter.getPrettyResults(resultList, input));
             }
 
             input = scanner.nextLine();
