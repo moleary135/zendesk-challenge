@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -124,28 +127,27 @@ public class Searcher {
 
     /**
      * The public search call that returns a List of SearchResults given a valid search
-     * First filters based on search parameters.
-     * Then maps to the corresponding SearchResult objects, which includes lookups for related objects.
+     * Filters based on search parameters, and then maps results to the corresponding SearchResult objects, which includes lookups for related objects.
      */
     public List<? extends SearchResult> search(String inObject, FieldType fieldType, String inField, String inValue) {
         switch (inObject) {
             case "organization":
-                return searchObjects(organizations.values(), fieldType, inField, inValue)
+                return search(organizations.values(), fieldType, inField, inValue)
                         .map(o -> new OrganizationResult((Organization)o,
-                        orgUsers.get(o.getFieldAsInteger("_id")),
-                        orgTickets.get(o.getFieldAsInteger("_id")))).collect(Collectors.toList());
+                                orgUsers.get(o.getFieldAsInteger("_id")),
+                                orgTickets.get(o.getFieldAsInteger("_id")))).collect(Collectors.toList());
             case "user":
-                return searchObjects(users.values(), fieldType, inField, inValue)
+                return search(users.values(), fieldType, inField, inValue)
                         .map(u -> new UserResult((User)u,
-                        organizations.get(u.getFieldAsInteger("organization_id")),
-                        userAssignedTickets.get(u.getFieldAsInteger("_id")),
-                        userSubmittedTickets.get(u.getFieldAsInteger("_id")))).collect(Collectors.toList());
+                                organizations.get(u.getFieldAsInteger("organization_id")),
+                                userAssignedTickets.get(u.getFieldAsInteger("_id")),
+                                userSubmittedTickets.get(u.getFieldAsInteger("_id")))).collect(Collectors.toList());
             case "ticket":
-                return searchObjects(tickets.values(), fieldType, inField, inValue)
+                return search(tickets.values(), fieldType, inField, inValue)
                         .map(t -> new TicketResult((Ticket)t,
-                        organizations.get(t.getFieldAsInteger("organization_id")),
-                        users.get(t.getFieldAsInteger("assignee_id")),
-                        users.get(t.getFieldAsInteger("submitter_id")))).collect(Collectors.toList());
+                                organizations.get(t.getFieldAsInteger("organization_id")),
+                                users.get(t.getFieldAsInteger("assignee_id")),
+                                users.get(t.getFieldAsInteger("submitter_id")))).collect(Collectors.toList());
         }
         throw new IllegalSearchException(INVALID_OBJECT_TYPE_TEXT); //inObject already validated so will hit return in switch
     }
@@ -154,36 +156,43 @@ public class Searcher {
      * Filters a collection based on the fieldType and search inValue
      * @return The filtered stream of SearchableObjects
      */
-    private Stream<? extends SearchableObject> searchObjects(Collection<? extends SearchableObject> objs, FieldType fieldType, String inField, String inValue) {
-        if (inValue.isEmpty()) {
+    private Stream<? extends SearchableObject> search(Collection<? extends SearchableObject> objs, FieldType fieldType, String inField, String inValue) {
+        if (inValue.isEmpty()) { //special case when looking for objects where the field does not exist or is 'empty'
             return objs.stream().filter(o -> o.getField(inField).equals(""));
+        } else { //filter out objects where field is absent first
+            return objs.stream().filter(o -> o.hasField(inField)).filter(o -> isMatch(o.getField(inField), fieldType, inValue));
         }
-        //else filter out nonexistent values
-        Stream<? extends SearchableObject> stream = objs.stream().filter(o -> !o.getField(inField).equals(""));
+    }
+
+    /**
+     * Compares two values based on the fieldType.
+     * Requires that validation on input is already done.
+     * @param val from the Searchable object
+     * @param fieldType
+     * @param inValue user input value
+     * @return true if the values are equivalent based on type
+     */
+    public boolean isMatch(Object val, FieldType fieldType, String inValue) {
         switch(fieldType) {
             case STRING:
-                return stream.filter(o -> ((String)o.getField(inField)).equalsIgnoreCase(inValue));
+                return ((String)val).equalsIgnoreCase(inValue);
             case INTEGER:
                 int i = Integer.parseInt(inValue);
-                return stream.filter(o -> ((Integer) o.getField(inField)) == i);
+                return (Integer)val == i;
             case BOOLEAN:
                 boolean b = Boolean.parseBoolean(inValue);
-                return stream.filter(o -> ((Boolean) o.getField(inField)) == b);
+                return (Boolean)val == b;
             case TIMESTAMP:
                 DateFormat df = new SimpleDateFormat(JSONLoader.dateFormatString);
                 try {
-                    Date d = df.parse(inValue);
-                    return stream.filter(o -> o.getField(inField).equals(d));
-                } catch (ParseException e) { //input and timestamp fields should've already been validated
+                    return val.equals(df.parse(inValue));
+                } catch (ParseException e) {
                     throw new IllegalSearchException(INVALID_TIMESTAMP_VALUE_TEXT);
                 }
             case SARRAY:
-                return stream.filter(o -> {
-                            List<?> list = (List<?>)o.getField(inField);
-                            return list.stream().anyMatch(e -> ((String)e).equalsIgnoreCase(inValue));});
+                    List<?> list = (List<?>)val;
+                    return list.stream().anyMatch(e -> isMatch(e, FieldType.STRING, inValue));
         }
-        //After validating input using methods above, should only throw when adding new searchable field types
-        // and not correctly adding search support
         throw new IllegalSearchException(INVALID_FIELD_TYPE_TEXT);
     }
 }

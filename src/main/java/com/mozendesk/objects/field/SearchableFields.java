@@ -1,6 +1,10 @@
 package com.mozendesk.objects.field;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.AbstractMap;
 
 /**
  * Defines the searchable fields and types on each object that extends SearchableObject

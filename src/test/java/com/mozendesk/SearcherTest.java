@@ -1,9 +1,6 @@
 package com.mozendesk;
 
 import com.mozendesk.objects.IllegalSearchException;
-import com.mozendesk.objects.Organization;
-import com.mozendesk.objects.Ticket;
-import com.mozendesk.objects.User;
 import com.mozendesk.objects.field.FieldType;
 import com.mozendesk.objects.results.OrganizationResult;
 import com.mozendesk.objects.results.SearchResult;
@@ -20,6 +17,7 @@ import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SearcherTest {
+
     public static Searcher searcher;
 
     @BeforeAll
@@ -102,7 +100,6 @@ public class SearcherTest {
         Set<String> ticketIds = new HashSet<>();
         result.tickets.forEach(u -> ticketIds.add((String)u.getField("_id")));
 
-
         assertEquals(102, result.organization.getField("_id"));
         assertEquals(TRUE, userIds.equals(userIdsSet));
         assertEquals(TRUE, ticketIds.equals(ticketIdsSet));
@@ -136,9 +133,5 @@ public class SearcherTest {
         assertEquals("Qualitern", result.organization.getField("name"));
         assertEquals(TRUE, assignedIds.equals(assignedIdsSet));
         assertNull(result.submittedTickets);
-
     }
-
-
-
 }
