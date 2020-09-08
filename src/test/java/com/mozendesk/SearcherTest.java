@@ -1,7 +1,7 @@
 package com.mozendesk;
 
 import com.mozendesk.objects.IllegalSearchException;
-import com.mozendesk.objects.field.FieldType;
+import com.mozendesk.objects.field.*;
 import com.mozendesk.objects.results.OrganizationResult;
 import com.mozendesk.objects.results.SearchResult;
 import com.mozendesk.objects.results.TicketResult;
@@ -32,56 +32,56 @@ public class SearcherTest {
 
     @Test
     public void testSearchInvalidObjectType() {
-        assertThrows(IllegalSearchException.class, () -> searcher.search("badObjectType", FieldType.STRING, "email", "rosannasimpson@flotonic.com"));
+        assertThrows(IllegalSearchException.class, () -> searcher.search("badObjectType", new StringFieldType(), "email", "rosannasimpson@flotonic.com"));
     }
 
     @Test
     public void testSearchEmptyValue() {
-        List<? extends SearchResult> result = searcher.search("ticket", FieldType.TIMESTAMP, "due_at", "");
+        List<? extends SearchResult> result = searcher.search("ticket", new TimestampFieldType(), "due_at", "");
         assertEquals(5, result.size());
     }
 
     @Test
     public void testSearchStringValue() {
-        List<? extends SearchResult> result = searcher.search("user", FieldType.STRING, "email", "rosannasimpson@flotonic.com");
+        List<? extends SearchResult> result = searcher.search("user", new StringFieldType(), "email", "rosannasimpson@flotonic.com");
         assertEquals(1, result.size());
 
-        result = searcher.search("organization", FieldType.STRING, "details", "MegaCorp");
+        result = searcher.search("organization", new StringFieldType(), "details", "MegaCorp");
         assertEquals(9, result.size());
     }
 
     @Test
     public void testSearchArrayValue() {
-        List<? extends SearchResult> result = searcher.search("organization", FieldType.SARRAY, "tags", "fulton");
+        List<? extends SearchResult> result = searcher.search("organization", new ArrayFieldType(new StringFieldType()), "tags", "fulton");
         assertEquals(1, result.size());
     }
 
     @Test
     public void testSearchBooleanValue() {
-        List<? extends SearchResult> result = searcher.search("ticket", FieldType.BOOLEAN, "has_incidents", "true");
+        List<? extends SearchResult> result = searcher.search("ticket", new BooleanFieldType(), "has_incidents", "true");
         assertEquals(99, result.size());
     }
 
     @Test
     public void testSearchIntegerValue() {
-        List<? extends SearchResult> result = searcher.search("ticket", FieldType.INTEGER, "organization_id", "103");
+        List<? extends SearchResult> result = searcher.search("ticket", new IntegerFieldType(), "organization_id", "103");
         assertEquals(6, result.size());
     }
 
     @Test
     public void testSearchTimestampValue() {
-        List<? extends SearchResult> result = searcher.search("user", FieldType.TIMESTAMP, "created_at", "2016-07-28T05:29:25 -10:00");
+        List<? extends SearchResult> result = searcher.search("user", new TimestampFieldType(), "created_at", "2016-07-28T05:29:25 -10:00");
         assertEquals(1, result.size());
     }
 
     @Test
     public void testSearchInvalidTimestampValue() {
-        assertThrows(IllegalSearchException.class, () -> searcher.search("user", FieldType.TIMESTAMP, "created_at", "2016/07/28T05:29:25 -10:00"));
+        assertThrows(IllegalSearchException.class, () -> searcher.search("user", new TimestampFieldType(), "created_at", "2016/07/28T05:29:25 -10:00"));
     }
 
     @Test
     public void testSearchOrganizationResult() {
-        List<? extends SearchResult> results = searcher.search("organization", FieldType.INTEGER, "_id", "102");
+        List<? extends SearchResult> results = searcher.search("organization", new IntegerFieldType(), "_id", "102");
         assertEquals(1, results.size());
 
         OrganizationResult result = (OrganizationResult)results.get(0);
@@ -107,7 +107,7 @@ public class SearcherTest {
 
     @Test
     public void testSearchTicketResult() {
-        List<? extends SearchResult> results = searcher.search("ticket", FieldType.STRING, "_id", "e68d8bfd-9826-42fd-9692-add445aa7430");
+        List<? extends SearchResult> results = searcher.search("ticket", new StringFieldType(), "_id", "e68d8bfd-9826-42fd-9692-add445aa7430");
         assertEquals(1, results.size());
 
         TicketResult result = (TicketResult)results.get(0);
@@ -119,7 +119,7 @@ public class SearcherTest {
 
     @Test
     public void testSearchUserResult() {
-        List<? extends SearchResult> results = searcher.search("user", FieldType.INTEGER, "_id", "2");
+        List<? extends SearchResult> results = searcher.search("user", new IntegerFieldType(), "_id", "2");
         assertEquals(1, results.size());
 
         UserResult result = (UserResult)results.get(0);

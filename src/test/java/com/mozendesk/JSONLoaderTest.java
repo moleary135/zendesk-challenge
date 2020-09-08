@@ -79,7 +79,7 @@ public class JSONLoaderTest {
         assertEquals(TRUE, users.get(1).getField("active"));
 
         List<?> tags = (List<?>)users.get(1).getField("tags");
-        List<String> matchingTags = new ArrayList<String>(
+        List<String> matchingTags = new ArrayList<>(
                 Arrays.asList("Springville", "Sutton", "Hartsville/Hartley", "Diaperville"));
         assertEquals(TRUE, tags.containsAll(matchingTags));
     }

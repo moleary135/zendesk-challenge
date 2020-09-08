@@ -1,8 +1,8 @@
 package com.mozendesk;
 
 import com.mozendesk.objects.IllegalSearchException;
+import com.mozendesk.objects.field.SearchableField;
 import com.mozendesk.objects.results.SearchResult;
-import com.mozendesk.objects.field.FieldType;
 import com.mozendesk.services.PrettyPrinter;
 import com.mozendesk.services.Searcher;
 
@@ -56,11 +56,15 @@ public class App {
             String inValue = inputArr.length != 3 ? "" : inputArr[2];
             try {
                 //validate search parameters
-                FieldType ft = searcher.getType(inputArr[0], inputArr[1]);
-                searcher.validateInValue(ft, inValue);
+                SearchableField sf = searcher.getType(inputArr[0], inputArr[1]);
+
+                //Can always search for 'empty' fields, so skip validation if empty search value
+                if (!inValue.isEmpty()) {
+                    sf.validateInputValue(inValue);
+                }
 
                 //search and print results
-                resultList = searcher.search(inputArr[0], ft, inputArr[1], inValue);
+                resultList = searcher.search(inputArr[0], sf, inputArr[1], inValue);
                 return PrettyPrinter.getPrettyResults(resultList, input);
             } catch (IllegalSearchException e) {
                 return e.getMessage();

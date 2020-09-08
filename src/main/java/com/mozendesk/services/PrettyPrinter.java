@@ -40,15 +40,15 @@ public class PrettyPrinter {
         switch(objectType) {
             case "organization":
                 SearchableFields.orgFieldTypes.keySet().forEach(key ->
-                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.orgFieldTypes.get(key).getType())));
+                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.orgFieldTypes.get(key).getFieldType().getPrettyTypeName())));
                 break;
             case "user":
                 SearchableFields.userFieldTypes.keySet().forEach(key ->
-                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.userFieldTypes.get(key).getType())));
+                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.userFieldTypes.get(key).getFieldType().getPrettyTypeName())));
                 break;
             case "ticket":
                 SearchableFields.ticketFieldTypes.keySet().forEach(key ->
-                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.ticketFieldTypes.get(key).getType())));
+                        sb.append(String.format(DOUBLE_COLUMNS_TEXT, key, SearchableFields.ticketFieldTypes.get(key).getFieldType().getPrettyTypeName())));
                 break;
             default:
                 return INVALID_OBJECT_TYPE_TEXT;

@@ -39,8 +39,7 @@ public abstract class SearchableObject {
     }
 
     /**
-     * @return null if unable to parse value to integer because you can try
-     * to convert any field to an Integer, but if the value isn't an integer will fail
+     * Fails if the value cannot be converted to an Integer
      */
     public Integer getFieldAsInteger(String fieldName) {
         try {

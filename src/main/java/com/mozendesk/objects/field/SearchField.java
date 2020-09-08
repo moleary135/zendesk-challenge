@@ -6,19 +6,19 @@ package com.mozendesk.objects.field;
  */
 public class SearchField {
     //Output name e.g.'External Id' instead of external_id
-    private String prettyName;
-    protected FieldType type;
+    private final String prettyName;
+    protected final SearchableField type;
 
-    public SearchField(String prettyName, FieldType type) {
+    public SearchField(String prettyName, SearchableField sf) {
         this.prettyName = prettyName;
-        this.type = type;
+        this.type = sf;
     }
 
     public String getPrettyName() {
         return prettyName;
     }
 
-    public FieldType getType() {
+    public SearchableField getFieldType() {
         return type;
     }
 }

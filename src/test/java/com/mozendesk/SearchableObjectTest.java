@@ -16,7 +16,6 @@ import java.util.List;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SearchableObjectTest {
 
@@ -83,7 +82,6 @@ public class SearchableObjectTest {
         ticket.setField("subject", "new subject");
         ticket.setField("organization_id", 103);
         ticket.setField("submitter_id", "103");
-        assertNull(ticket.getFieldAsInteger("subject"));
         assertEquals(TRUE, 103 == ticket.getFieldAsInteger("organization_id"));
         assertEquals(TRUE, 103 == ticket.getFieldAsInteger("submitter_id"));
     }

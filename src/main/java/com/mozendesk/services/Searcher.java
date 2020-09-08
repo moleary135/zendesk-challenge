@@ -1,17 +1,14 @@
 package com.mozendesk.services;
 
 import com.mozendesk.objects.*;
+import com.mozendesk.objects.field.SearchableField;
 import com.mozendesk.objects.field.SearchableFields;
 import com.mozendesk.objects.results.OrganizationResult;
 import com.mozendesk.objects.results.SearchResult;
 import com.mozendesk.objects.results.TicketResult;
 import com.mozendesk.objects.results.UserResult;
-import com.mozendesk.objects.field.FieldType;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -68,21 +65,21 @@ public class Searcher {
      * Fetches the type of the field on the given object
      * @return the FieldType of the field on the given object
      */
-    public FieldType getType(String object, String field) {
+    public SearchableField getType(String object, String field) {
         switch(object) {
             case "organization":
                 if (SearchableFields.orgFieldTypes.containsKey(field)) {
-                    return SearchableFields.orgFieldTypes.get(field).getType();
+                    return SearchableFields.orgFieldTypes.get(field).getFieldType();
                 }
                 break;
             case "user" :
                 if (SearchableFields.userFieldTypes.containsKey(field)) {
-                    return SearchableFields.userFieldTypes.get(field).getType();
+                    return SearchableFields.userFieldTypes.get(field).getFieldType();
                 }
                 break;
             case "ticket" :
                 if (SearchableFields.ticketFieldTypes.containsKey(field)) {
-                    return SearchableFields.ticketFieldTypes.get(field).getType();
+                    return SearchableFields.ticketFieldTypes.get(field).getFieldType();
                 }
                 break;
             default:
@@ -92,58 +89,24 @@ public class Searcher {
     }
 
     /**
-     * Validates the search value against the field type
-     * @return true if inValue is a possible value given the FieldType, else false
-     * Since input is a String by default, Strings (including empty "") are always valid
-     */
-    public boolean validateInValue(FieldType fieldType, String inValue) {
-        if (inValue.isEmpty()) {
-            return true;
-        }
-
-        switch(fieldType) {
-            case INTEGER:
-                try {
-                    Integer.parseInt(inValue);
-                } catch (NumberFormatException e) {
-                    throw new IllegalSearchException(INVALID_INTEGER_VALUE_TEXT);
-                }
-                break;
-            case BOOLEAN:
-                if (!(inValue.equalsIgnoreCase("true") || inValue.equalsIgnoreCase("false"))) {
-                    throw new IllegalSearchException(INVALID_BOOLEAN_VALUE_TEXT);
-                }
-                break;
-            case TIMESTAMP:
-                DateFormat df = new SimpleDateFormat(JSONLoader.dateFormatString);
-                try {
-                    df.parse(inValue);
-                } catch (ParseException e) {
-                    throw new IllegalSearchException(INVALID_TIMESTAMP_VALUE_TEXT);
-                }
-        }
-        return true;
-    }
-
-    /**
      * The public search call that returns a List of SearchResults given a valid search
      * Filters based on search parameters, and then maps results to the corresponding SearchResult objects, which includes lookups for related objects.
      */
-    public List<? extends SearchResult> search(String inObject, FieldType fieldType, String inField, String inValue) {
+    public List<? extends SearchResult> search(String inObject, SearchableField sf, String inField, String inValue) {
         switch (inObject) {
             case "organization":
-                return search(organizations.values(), fieldType, inField, inValue)
+                return search(organizations.values(), sf, inField, inValue)
                         .map(o -> new OrganizationResult((Organization)o,
                                 orgUsers.get(o.getFieldAsInteger("_id")),
                                 orgTickets.get(o.getFieldAsInteger("_id")))).collect(Collectors.toList());
             case "user":
-                return search(users.values(), fieldType, inField, inValue)
+                return search(users.values(), sf, inField, inValue)
                         .map(u -> new UserResult((User)u,
                                 organizations.get(u.getFieldAsInteger("organization_id")),
                                 userAssignedTickets.get(u.getFieldAsInteger("_id")),
                                 userSubmittedTickets.get(u.getFieldAsInteger("_id")))).collect(Collectors.toList());
             case "ticket":
-                return search(tickets.values(), fieldType, inField, inValue)
+                return search(tickets.values(), sf, inField, inValue)
                         .map(t -> new TicketResult((Ticket)t,
                                 organizations.get(t.getFieldAsInteger("organization_id")),
                                 users.get(t.getFieldAsInteger("assignee_id")),
@@ -156,43 +119,11 @@ public class Searcher {
      * Filters a collection based on the fieldType and search inValue
      * @return The filtered stream of SearchableObjects
      */
-    private Stream<? extends SearchableObject> search(Collection<? extends SearchableObject> objs, FieldType fieldType, String inField, String inValue) {
+    private Stream<? extends SearchableObject> search(Collection<? extends SearchableObject> objs, SearchableField sf, String inField, String inValue) {
         if (inValue.isEmpty()) { //special case when looking for objects where the field does not exist or is 'empty'
             return objs.stream().filter(o -> o.getField(inField).equals(""));
         } else { //filter out objects where field is absent first
-            return objs.stream().filter(o -> o.hasField(inField)).filter(o -> isMatch(o.getField(inField), fieldType, inValue));
+            return objs.stream().filter(o -> o.hasField(inField)).filter(o -> sf.isMatch(o.getField(inField), inValue));
         }
-    }
-
-    /**
-     * Compares two values based on the fieldType.
-     * Requires that validation on input is already done.
-     * @param val from the Searchable object
-     * @param fieldType
-     * @param inValue user input value
-     * @return true if the values are equivalent based on type
-     */
-    public boolean isMatch(Object val, FieldType fieldType, String inValue) {
-        switch(fieldType) {
-            case STRING:
-                return ((String)val).equalsIgnoreCase(inValue);
-            case INTEGER:
-                int i = Integer.parseInt(inValue);
-                return (Integer)val == i;
-            case BOOLEAN:
-                boolean b = Boolean.parseBoolean(inValue);
-                return (Boolean)val == b;
-            case TIMESTAMP:
-                DateFormat df = new SimpleDateFormat(JSONLoader.dateFormatString);
-                try {
-                    return val.equals(df.parse(inValue));
-                } catch (ParseException e) {
-                    throw new IllegalSearchException(INVALID_TIMESTAMP_VALUE_TEXT);
-                }
-            case SARRAY:
-                    List<?> list = (List<?>)val;
-                    return list.stream().anyMatch(e -> isMatch(e, FieldType.STRING, inValue));
-        }
-        throw new IllegalSearchException(INVALID_FIELD_TYPE_TEXT);
     }
 }

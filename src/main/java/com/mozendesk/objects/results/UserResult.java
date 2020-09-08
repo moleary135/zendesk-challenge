@@ -13,10 +13,10 @@ import java.util.List;
  * submitted by the user.
  */
 public class UserResult extends SearchResult {
-    public User user;
-    public Organization organization;
-    public List<Ticket> assignedTickets;
-    public List<Ticket> submittedTickets;
+    public final User user;
+    public final Organization organization;
+    public final List<Ticket> assignedTickets;
+    public final List<Ticket> submittedTickets;
 
     public UserResult(User user, Organization organization, List<Ticket> assignedTickets, List<Ticket> submittedTickets) {
         this.user = user;

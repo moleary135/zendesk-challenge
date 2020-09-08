@@ -10,10 +10,10 @@ import com.mozendesk.objects.User;
  * the user it is assigned to and the user it was submitted by.
  */
 public class TicketResult extends SearchResult {
-    public Ticket ticket;
-    public Organization organization;
-    public User assignedTo;
-    public User submittedBy;
+    public final Ticket ticket;
+    public final Organization organization;
+    public final User assignedTo;
+    public final User submittedBy;
 
     public TicketResult(Ticket ticket, Organization organization, User assignedTo, User submittedBy) {
         this.ticket = ticket;
